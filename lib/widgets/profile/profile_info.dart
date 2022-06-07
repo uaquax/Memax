@@ -1,53 +1,93 @@
 import 'package:client/services/constants.dart';
+import 'package:client/services/server_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-class ProfileInfo extends StatelessWidget {
-  final String description;
-  final String name;
-  final String user_id;
+class ProfileInfo extends StatefulWidget {
+  final String id;
 
-  const ProfileInfo(
-      {Key? key,
-      required this.description,
-      required this.name,
-      required this.user_id})
-      : super(key: key);
+  const ProfileInfo({Key? key, required this.id}) : super(key: key);
+
+  @override
+  State<ProfileInfo> createState() => _ProfileInfoState();
+}
+
+class _ProfileInfoState extends State<ProfileInfo> {
+  String? userName;
+  String? biography;
+  String avatar = defaultAvatarUrl;
+  String? userId;
+  String? description;
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _getInfo();
+  }
+
+  void _getInfo() async {
+    final user = await ServerService.getUser(id: widget.id);
+    setState(() {
+      description = user.biography;
+      userName = user.userName;
+      biography = user.biography.isEmpty ? "" : user.biography;
+      avatar = user.avatar;
+      userId = user.userId;
+
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(8),
+    return isLoading
+        ? const Center(
+            child: SpinKitCircle(size: 120, color: kGrey),
+          )
+        : Row(
+            children: <Widget>[
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.all(20),
+                    child: Text(
+                      description == null || description?.isEmpty == true
+                          ? "Нет описания"
+                          : description ?? "Нет описания",
+                      style: TextStyle(
+                          color: description == null ||
+                                  description?.isEmpty == true
+                              ? kGrey
+                              : Colors.black),
+                    ),
+                  ),
+                ),
               ),
-              padding: const EdgeInsets.all(20),
-              child: Text(description),
-            ),
-          ),
-        ),
-        Column(
-          children: <Widget>[
-            const CircleAvatar(
-              backgroundImage: AssetImage("assets/images/avatar.jpg"),
-              radius: 70,
-            ),
-            const SizedBox(height: 15),
-            Text(name),
-            Text(
-              "id: $user_id",
-              style: const TextStyle(color: kGrey),
-            ),
-          ],
-        ),
-        const SizedBox(
-          width: 20,
-        )
-      ],
-    );
+              Column(
+                children: <Widget>[
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(avatar),
+                    radius: 70,
+                  ),
+                  const SizedBox(height: 15),
+                  Text(userName ?? "Нет имени"),
+                  Text(
+                    "id: $userId",
+                    style: const TextStyle(color: kGrey),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                width: 20,
+              )
+            ],
+          );
   }
 }

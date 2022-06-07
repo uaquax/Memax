@@ -10,7 +10,7 @@ class SignHeader extends StatelessWidget {
         padding: const EdgeInsets.all(0),
         child: Image.asset(
           "assets/images/security.png",
-          width: 180,
+          width: 220,
         ),
       ),
     );

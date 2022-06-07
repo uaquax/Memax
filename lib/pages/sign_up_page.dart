@@ -1,12 +1,11 @@
+import 'package:client/models/user_model.dart';
+import 'package:client/services/constants.dart';
 import 'package:client/services/dialogs.dart';
 import 'package:client/pages/memes_page.dart';
-import 'package:client/pages/sign_in_page.dart';
-import 'package:client/services/server_manager.dart';
+import 'package:client/services/server_service.dart';
 import 'package:client/widgets/components/input_box.dart';
-import 'package:client/widgets/components/password_box.dart';
 import 'package:client/widgets/sign/sign_button.dart';
 import 'package:client/widgets/sign/sign_header.dart';
-import 'package:client/widgets/sign/sign_with_google.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,73 +25,74 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  // TODO: СДЕЛАЙ НОРМАЛЬНОЕ ОТОБРАЖЕНИЕ ОШИБОК В ПОЛЯХ
-  // TODO: СДЕЛАЙ НОРМАЛЬНОЕ ОТОБРАЖЕНИЕ ОШИБОК В ПОЛЯХ
-  // TODO: СДЕЛАЙ НОРМАЛЬНОЕ ОТОБРАЖЕНИЕ ОШИБОК В ПОЛЯХ
-  // TODO: СДЕЛАЙ НОРМАЛЬНОЕ ОТОБРАЖЕНИЕ ОШИБОК В ПОЛЯХ
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(children: <Widget>[
-        const SizedBox(height: 10),
-        const SignHeader(),
-        SignInput(
-            hintText: "Email", topPadding: 15, controller: _emailController),
-        SignInput(
-            hintText: "Username",
-            topPadding: 15,
-            controller: _usernameController),
-        SignPassword(
-            hintText: "Password",
-            topPadding: 15,
-            controller: _passwordController),
-        SignPassword(
-            hintText: "Confirm password",
-            topPadding: 15,
-            controller: _confirmPasswordController),
-        const SizedBox(
-          height: 10,
-        ),
-        SignButton(
-          text: "Sign Up",
-          onPressed: _signUp,
-        ),
-        TextButton(
+      resizeToAvoidBottomInset: false,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const SizedBox(height: 10),
+          const SignHeader(),
+          SignInput(
+              hintText: "Email", topPadding: 15, controller: _emailController),
+          SignInput(
+              hintText: "Username",
+              topPadding: 15,
+              controller: _usernameController),
+          SignInput(
+              hintText: "Password",
+              topPadding: 15,
+              controller: _passwordController,
+              isObscureText: true),
+          SignInput(
+              hintText: "Confirm password",
+              topPadding: 15,
+              controller: _confirmPasswordController,
+              isObscureText: true),
+          const SizedBox(
+            height: 10,
+          ),
+          SignButton(
+            text: "Sign Up",
             onPressed: () {
-              Navigator.of(context).pushNamed(SignInPage.route);
+              Navigator.pushNamed(context, MemesPage.route);
             },
-            child: const Text(
-              "Already have an account?",
-              style: TextStyle(decoration: TextDecoration.underline),
-            )),
-        const SignWithGoogle(),
-      ]),
+          ),
+          TextButton(
+              onPressed: _signUp,
+              child: const Text(
+                "Already have an account?",
+                style: TextStyle(decoration: TextDecoration.underline),
+              )),
+        ],
+      ),
     );
   }
 
-  void _signUp() async {
+  Future<void> _signUp() async {
     if (_passwordController.text == _confirmPasswordController.text &&
         _passwordController.text.length > 8 &&
         _usernameController.text.isNotEmpty &&
         _emailController.text.isNotEmpty &&
         _emailController.text.isValidEmail()) {
       try {
-        final user = await ServerManager.signUp(
-            _emailController.text,
-            _usernameController.text,
-            _passwordController.text,
-            _confirmPasswordController.text);
+        final String id = await ServerService.signUp(
+            user: UserModel(
+                email: _emailController.text,
+                userName: _usernameController.text,
+                password: _passwordController.text,
+                userId: ""));
 
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString("user", user);
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString(spId, id);
 
         showSuccess(
             context: context,
             title: "Success",
             message: "You have successfully signed up!");
 
-        await Future.delayed(const Duration(seconds: 1));
+        await Future.delayed(const Duration(milliseconds: 200));
         if (!mounted) return;
 
         Navigator.of(context).pushNamed(MemesPage.route);
