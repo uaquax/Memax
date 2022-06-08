@@ -1,4 +1,3 @@
-import 'package:client/services/colors.dart';
 import 'package:client/services/constants.dart';
 import 'package:client/widgets/profile/profile_header.dart';
 import 'package:client/widgets/profile/profile_info.dart';

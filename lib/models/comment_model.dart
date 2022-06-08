@@ -8,7 +8,7 @@ class CommentModel {
 
   CommentModel({
     required this.author,
-    required this.id,
+    this.id = "",
     required this.text,
     required this.date,
   });

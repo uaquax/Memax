@@ -15,4 +15,5 @@ const Color kButtonColor = Color.fromARGB(255, 114, 137, 218);
 const Color kBackgroundColor = Color.fromARGB(255, 44, 47, 51);
 const Color kGrey = Color.fromARGB(255, 128, 128, 128);
 
-const String spId = "id";
+const String kId = "id";
+const String kToken = "token";

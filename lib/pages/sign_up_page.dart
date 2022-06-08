@@ -1,4 +1,5 @@
 import 'package:client/models/user_model.dart';
+import 'package:client/pages/sign_in_page.dart';
 import 'package:client/services/constants.dart';
 import 'package:client/services/dialogs.dart';
 import 'package:client/pages/memes_page.dart';
@@ -7,7 +8,7 @@ import 'package:client/widgets/components/input_box.dart';
 import 'package:client/widgets/sign/sign_button.dart';
 import 'package:client/widgets/sign/sign_header.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SignUpPage extends StatefulWidget {
   static const String route = "/sign_up";
@@ -53,14 +54,11 @@ class _SignUpPageState extends State<SignUpPage> {
           const SizedBox(
             height: 10,
           ),
-          SignButton(
-            text: "Sign Up",
-            onPressed: () {
-              Navigator.pushNamed(context, MemesPage.route);
-            },
-          ),
+          SignButton(text: "Sign Up", onPressed: _signUp),
           TextButton(
-              onPressed: _signUp,
+              onPressed: () {
+                Navigator.of(context).pushNamed(SignInPage.route);
+              },
               child: const Text(
                 "Already have an account?",
                 style: TextStyle(decoration: TextDecoration.underline),
@@ -77,15 +75,16 @@ class _SignUpPageState extends State<SignUpPage> {
         _emailController.text.isNotEmpty &&
         _emailController.text.isValidEmail()) {
       try {
-        final String id = await ServerService.signUp(
+        final UserModel user = await ServerService.signUp(
             user: UserModel(
                 email: _emailController.text,
                 userName: _usernameController.text,
                 password: _passwordController.text,
                 userId: ""));
 
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString(spId, id);
+        const storage = FlutterSecureStorage();
+        await storage.write(key: kId, value: user.id);
+        await storage.write(key: kToken, value: user.token);
 
         showSuccess(
             context: context,

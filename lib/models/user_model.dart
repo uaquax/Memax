@@ -3,6 +3,7 @@ class UserModel {
   String userName;
   String userId;
   String email;
+  String? token;
   String password;
   String avatar;
   String biography = "";
@@ -18,10 +19,9 @@ class UserModel {
 
   static UserModel fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'],
-      userName: json['username'] as String,
-      email: json['email'] as String,
-      avatar: json['avatar'] as String,
-    );
+        id: json['id'],
+        userName: json['username'],
+        email: json['email'],
+        avatar: json['avatar']);
   }
 }

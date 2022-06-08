@@ -5,10 +5,13 @@ import 'package:client/models/author_model.dart';
 import 'package:client/models/comment_model.dart';
 import 'package:client/models/meme_model.dart';
 import 'package:client/pages/profile_page.dart';
-import 'package:client/services/colors.dart';
+import 'package:client/services/constants.dart';
+import 'package:client/services/server_service.dart';
 import 'package:client/widgets/components/comment.dart';
 import 'package:client/widgets/memes/memes_header.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 
 class MemesPage extends StatefulWidget {
   static const String route = "/memes";
@@ -154,11 +157,6 @@ class _MemesPageState extends State<MemesPage> {
   }
 
   void _showComments(MemeModel meme) {
-    final comment = CommentModel(
-        author: AuthorModel(id: "", userName: "uaquax"),
-        id: "",
-        text: "This meme so fun!",
-        date: "2020-05-05");
     final comments = <CommentModel>[];
     TextEditingController _controller = TextEditingController();
 
@@ -207,13 +205,21 @@ class _MemesPageState extends State<MemesPage> {
                           Icons.send,
                           color: kButtonColor,
                         ),
-                        onPressed: () {
+                        onPressed: () async {
+                          const storage = FlutterSecureStorage();
+                          final user = await ServerService.getUser(
+                              id: await storage.read(key: kId) ?? "");
                           setState(() {
                             comments.add(CommentModel(
-                                author: AuthorModel(id: "", userName: "uaquax"),
+                                author: AuthorModel(
+                                    id: user.id ?? "",
+                                    userName: user.userName,
+                                    avatar: user.avatar,
+                                    userId: user.userId),
                                 id: "",
                                 text: _controller.text,
-                                date: "2020-05-05"));
+                                date: DateFormat('yyyy-MM-dd HH-ss')
+                                    .format(DateTime.now())));
                             _controller.text = "";
                           });
                         },

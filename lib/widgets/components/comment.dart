@@ -1,5 +1,4 @@
 import 'package:client/models/comment_model.dart';
-import 'package:client/models/meme_model.dart';
 import 'package:flutter/material.dart';
 
 class Comment extends StatelessWidget {
@@ -12,8 +11,8 @@ class Comment extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(children: [
-        const CircleAvatar(
-          backgroundImage: AssetImage("assets/images/avatar.jpg"),
+        CircleAvatar(
+          backgroundImage: NetworkImage(comment.author.avatar),
           radius: 25,
         ),
         const SizedBox(width: 8),

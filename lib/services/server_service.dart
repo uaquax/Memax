@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class ServerService {
-  static Future<String> signUp({required UserModel user}) async {
+  static Future<UserModel> signUp({required UserModel user}) async {
     try {
       final response = await http.post(Uri.parse(signUpUrl),
           headers: <String, String>{
@@ -23,7 +23,7 @@ class ServerService {
       if (response.statusCode == 200) {
         final responseJson =
             response.body is String ? await json.decode(response.body) : null;
-        return responseJson['user']['id'];
+        return UserModel.fromJson(responseJson['user']);
       } else {
         throw Exception(response.statusCode.toString());
       }
@@ -52,7 +52,7 @@ class ServerService {
     }
   }
 
-  static Future<String> signIn(
+  static Future<UserModel> signIn(
       {required String email, required String password}) async {
     try {
       final response = await http.post(Uri.parse(signInUrl),
@@ -63,10 +63,11 @@ class ServerService {
             "email": email,
             "password": password,
           }));
-      if (response.statusCode == 200) {
-        final responseJson =
-            response.body is String ? await json.decode(response.body) : null;
-        return responseJson['user'];
+      if (response.statusCode == 200 && response.body is String) {
+        final responseJson = response.body is String
+            ? await json.decode(response.body)["user"]
+            : "";
+        return UserModel.fromJson(responseJson);
       } else {
         throw Exception(response.statusCode.toString());
       }

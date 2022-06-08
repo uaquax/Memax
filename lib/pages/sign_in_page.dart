@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:client/pages/memes_page.dart';
 import 'package:client/pages/sign_up_page.dart';
+import 'package:client/services/constants.dart';
 import 'package:client/services/server_service.dart';
 import 'package:client/widgets/components/input_box.dart';
 import 'package:client/widgets/components/link_button.dart';
 import 'package:client/widgets/sign/sign_button.dart';
 import 'package:client/widgets/sign/sign_header.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SignInPage extends StatefulWidget {
   static const String route = "/sign_in";
@@ -34,8 +35,7 @@ class _SignInPageState extends State<SignInPage> {
             const SizedBox(
               height: 30,
             ),
-            SignInput(
-                hintText: "Email or Username", controller: _emailController),
+            SignInput(hintText: "Email", controller: _emailController),
             SignInput(
               hintText: "Password",
               controller: _passwordController,
@@ -66,8 +66,9 @@ class _SignInPageState extends State<SignInPage> {
       password: _passwordController.text,
     );
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("id", jsonDecode(user)["id"]);
+    const storage = FlutterSecureStorage();
+    await storage.write(key: kId, value: user.id);
+    await storage.write(key: kToken, value: user.token);
 
     await Future.delayed(const Duration(milliseconds: 200));
     if (!mounted) return;
