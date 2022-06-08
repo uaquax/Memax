@@ -2,8 +2,11 @@ import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:client/models/author_model.dart';
+import 'package:client/models/comment_model.dart';
 import 'package:client/models/meme_model.dart';
-import 'package:client/services/constants.dart';
+import 'package:client/pages/profile_page.dart';
+import 'package:client/services/colors.dart';
+import 'package:client/widgets/components/comment.dart';
 import 'package:client/widgets/memes/memes_header.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +23,7 @@ class _MemesPageState extends State<MemesPage> {
     MemeModel(
       title: "Meme?",
       url: "assets/images/meme_1.jpg",
-      author: AuthorModel(userName: "uaquax"),
+      author: AuthorModel(id: "", userName: "uaquax"),
       description: 'What is meme?',
       id: '1',
       type: MemeType.image,
@@ -67,6 +70,13 @@ class _MemesPageState extends State<MemesPage> {
                               margin: const EdgeInsets.all(20),
                               child: Card(
                                 child: ListTile(
+                                  onTap: () => {
+                                    Navigator.of(context).pushNamed(
+                                      ProfilePage.route,
+                                      arguments: ProfilePageArguments(
+                                          id: meme.author.id),
+                                    )
+                                  },
                                   title: Text(meme.author.userName),
                                   leading: const CircleAvatar(
                                     backgroundImage:
@@ -90,9 +100,18 @@ class _MemesPageState extends State<MemesPage> {
                               ),
                             ),
                             Expanded(
-                              child: Image.asset(
-                                meme.url,
-                                fit: BoxFit.contain,
+                              child: GestureDetector(
+                                // handle swipe down
+                                onVerticalDragEnd: (DragEndDetails details) {
+                                  if (details.primaryVelocity! < 0) {
+                                    _showComments(meme);
+                                  }
+                                },
+
+                                child: Image.asset(
+                                  meme.url,
+                                  fit: BoxFit.contain,
+                                ),
                               ),
                             ),
                             Align(
@@ -114,7 +133,9 @@ class _MemesPageState extends State<MemesPage> {
                             Align(
                               alignment: Alignment.bottomCenter,
                               child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    _showComments(meme);
+                                  },
                                   icon: const Icon(
                                       Icons.keyboard_arrow_down_rounded)),
                             ),
@@ -132,6 +153,82 @@ class _MemesPageState extends State<MemesPage> {
     );
   }
 
+  void _showComments(MemeModel meme) {
+    final comment = CommentModel(
+        author: AuthorModel(id: "", userName: "uaquax"),
+        id: "",
+        text: "This meme so fun!",
+        date: "2020-05-05");
+    final comments = <CommentModel>[];
+    TextEditingController _controller = TextEditingController();
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    icon: const Icon(Icons.keyboard_arrow_up_rounded)),
+                Expanded(
+                  child: ListView.builder(
+                    reverse: true,
+                    itemCount: comments.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Comment(
+                        comment: comments[index],
+                      );
+                    },
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(10),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _controller,
+                          decoration: InputDecoration(
+                            hintText: "Add comment",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.send,
+                          color: kButtonColor,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            comments.add(CommentModel(
+                                author: AuthorModel(id: "", userName: "uaquax"),
+                                id: "",
+                                text: _controller.text,
+                                date: "2020-05-05"));
+                            _controller.text = "";
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+      },
+    );
+  }
+
   void _addMeme() {
     final memeUrls = <String>[
       "assets/images/meme_1.jpg",
@@ -143,7 +240,7 @@ class _MemesPageState extends State<MemesPage> {
       _memes.add(MemeModel(
         title: "Meme?",
         url: memeUrls[Random().nextInt(memeUrls.length)],
-        author: AuthorModel(userName: "uaquax"),
+        author: AuthorModel(id: "", userName: "uaquax"),
         description: 'What is meme?',
         id: '1',
         type: MemeType.image,

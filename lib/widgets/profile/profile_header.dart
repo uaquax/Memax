@@ -1,4 +1,6 @@
 import 'package:client/pages/memes_page.dart';
+import 'package:client/pages/settings_page.dart';
+import 'package:client/services/colors.dart';
 import 'package:flutter/material.dart';
 
 class ProfileHeader extends StatelessWidget {
@@ -16,12 +18,20 @@ class ProfileHeader extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pushNamed(MemesPage.route);
               },
-              icon: const Icon(Icons.home),
+              icon: const Icon(
+                Icons.home,
+                color: kGrey,
+              ),
               iconSize: 35,
             ),
             IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.settings),
+              onPressed: () {
+                Navigator.of(context).pushNamed(SettingsPage.route);
+              },
+              icon: const Icon(
+                Icons.settings,
+                color: kGrey,
+              ),
               //make icon bigger
               iconSize: 35,
             ),

@@ -15,7 +15,6 @@ class SignButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(kButtonColor),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(36.0),
