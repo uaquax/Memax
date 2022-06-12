@@ -1,14 +1,13 @@
 import 'package:client/models/user_model.dart';
 import 'package:client/pages/sign_in_page.dart';
-import 'package:client/services/constants.dart';
 import 'package:client/services/dialogs.dart';
 import 'package:client/pages/memes_page.dart';
 import 'package:client/services/server_service.dart';
+import 'package:client/services/storage_manager.dart';
 import 'package:client/widgets/components/input_box.dart';
 import 'package:client/widgets/sign/sign_button.dart';
 import 'package:client/widgets/sign/sign_header.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SignUpPage extends StatefulWidget {
   static const String route = "/sign_up";
@@ -82,9 +81,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 password: _passwordController.text,
                 userId: ""));
 
-        const storage = FlutterSecureStorage();
-        await storage.write(key: kId, value: user.id);
-        await storage.write(key: kToken, value: user.token);
+        StorageManager.saveId(user.id ?? "");
+        StorageManager.saveJWT(user.jwt ?? "");
 
         showSuccess(
             context: context,

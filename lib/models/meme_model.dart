@@ -6,7 +6,6 @@ class MemeModel {
   String id;
   AuthorModel author;
   String title;
-  bool isLiked = false;
   String description;
 
   MemeModel({

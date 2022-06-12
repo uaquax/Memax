@@ -1,5 +1,6 @@
 import 'package:client/services/constants.dart';
 import 'package:client/services/server_service.dart';
+import 'package:client/services/storage_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -20,6 +21,8 @@ class _ProfileInfoState extends State<ProfileInfo> {
   String? description;
 
   bool isLoading = true;
+  bool isOwner = false;
+  bool isFollowed = false;
 
   @override
   void initState() {
@@ -29,6 +32,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
 
   void _getInfo() async {
     final user = await ServerService.getUser(id: widget.id);
+    isOwner = user.userId == await StorageManager.getId();
     setState(() {
       description = user.biography;
       userName = user.userName;
@@ -36,58 +40,63 @@ class _ProfileInfoState extends State<ProfileInfo> {
       avatar = user.avatar;
       userId = user.userId;
 
-      isLoading = false;
+      if (user.userName != "") {
+        isLoading = false;
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? const Center(
-            child: SpinKitCircle(size: 120, color: kGrey),
-          )
-        : Row(
-            children: <Widget>[
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.all(20),
-                    child: Text(
-                      description == null || description?.isEmpty == true
-                          ? "Нет описания"
-                          : description ?? "Нет описания",
-                      style: TextStyle(
-                          color: description == null ||
-                                  description?.isEmpty == true
-                              ? kGrey
-                              : Colors.black),
-                    ),
-                  ),
-                ),
+    // return isLoading == true
+    //     ? const Center(
+    //         child: SpinKitCircle(size: 120, color: kGrey),
+    //       )
+    //     :
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(8),
               ),
-              Column(
-                children: <Widget>[
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(avatar),
-                    radius: 70,
-                  ),
-                  const SizedBox(height: 15),
-                  Text(userName ?? "Нет имени"),
-                  Text(
-                    "id: $userId",
-                    style: const TextStyle(color: kGrey),
-                  ),
-                ],
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                description == null || description?.isEmpty == true
+                    ? "Нет описания"
+                    : description ?? "Нет описания",
+                style: TextStyle(
+                    color: description == null || description?.isEmpty == true
+                        ? kGrey
+                        : Colors.black),
               ),
-              const SizedBox(
-                width: 20,
-              )
-            ],
-          );
+            ),
+          ),
+        ),
+        Column(
+          children: <Widget>[
+            const CircleAvatar(
+              radius: 70,
+              backgroundImage: AssetImage("assets/images/avatar.jpg"),
+            ),
+            const SizedBox(height: 15),
+            const Text("uaquax"),
+            Text(
+              "id: $userId",
+              style: const TextStyle(color: kGrey),
+            ),
+            ElevatedButton(
+                onPressed: () {},
+                child: Text(isOwner ? "Редактировать" : "Подписаться")),
+          ],
+        ),
+        const SizedBox(
+          width: 20,
+        )
+      ],
+    );
   }
 }

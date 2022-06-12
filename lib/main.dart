@@ -1,4 +1,6 @@
+import 'package:client/pages/create_meme_page.dart';
 import 'package:client/pages/memes_page.dart';
+import 'package:client/pages/my_profile_page.dart';
 import 'package:client/pages/settings_page.dart';
 import 'package:client/pages/sign_in_page.dart';
 import 'package:client/services/colors.dart';
@@ -19,15 +21,17 @@ class App extends StatelessWidget {
       themeMode: ThemeMode.light,
       theme: Themes.light,
       darkTheme: Themes.dark,
-      home: const SignUpPage(),
+      home: const MemesPage(),
       routes: {
         SignUpPage.route: (context) => const SignUpPage(),
         SignInPage.route: (context) => const SignInPage(),
         MemesPage.route: (context) => const MemesPage(),
         ProfilePage.route: (context) => const ProfilePage(),
         SettingsPage.route: (context) => const SettingsPage(),
+        CreateMemePage.route: (context) => const CreateMemePage(),
+        MyProfilePage.route: (context) => const MyProfilePage(),
       },
-      initialRoute: SignUpPage.route,
+      initialRoute: MemesPage.route,
     );
   }
 }

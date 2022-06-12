@@ -6,6 +6,7 @@ class AuthorModel {
   String userId;
   String avatar;
   bool isFollowed;
+  bool isLiked = false;
 
   AuthorModel({
     required this.id,

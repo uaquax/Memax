@@ -47,6 +47,4 @@ app.*.map.json
 /android/app/release
 
 /android/upload-keystore.jks
-/lib/services/constants.dart
-/assets/images/*.png
-/assets/images/*.jpg
+./lib/services/constants.dart

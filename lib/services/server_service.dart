@@ -48,7 +48,7 @@ class ServerService {
         throw Exception("$e");
       }
     } else {
-      throw Exception("id is empty");
+      return UserModel(userName: "");
     }
   }
 

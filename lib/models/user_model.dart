@@ -3,7 +3,7 @@ class UserModel {
   String userName;
   String userId;
   String email;
-  String? token;
+  String? jwt;
   String password;
   String avatar;
   String biography = "";
