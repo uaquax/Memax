@@ -34,9 +34,9 @@ class _ProfilePageState extends State<ProfilePage> {
       ProfileInfo(id: args.id),
       const SizedBox(height: 20),
       Container(
-        height: 1,
+        height: 1.4,
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.black),
+          border: Border.all(color: Colors.white),
           borderRadius: BorderRadius.circular(8),
         ),
       ),

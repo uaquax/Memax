@@ -1,0 +1,36 @@
+{
+    "docs": [
+        {
+            "_id": "62a7a48998ec337c57943465",
+            "author": "undefined",
+            "title": "kukuruza function now() { [native code] }",
+            "description": "kukuruza desc function now() { [native code] }",
+            "comments": [],
+            "likes": [],
+            "picture": "9c995e66-5186-4d7f-8630-a2599489e6be.jpg",
+            "creationDate": "2022-06-13",
+            "__v": 0
+        },
+        {
+            "_id": "62a7a48a98ec337c57943467",
+            "author": "undefined",
+            "title": "kukuruza function now() { [native code] }",
+            "description": "kukuruza desc function now() { [native code] }",
+            "comments": [],
+            "likes": [],
+            "picture": "46dc017d-21b8-44f5-b6e7-acb6174f3b65.jpg",
+            "creationDate": "2022-06-13",
+            "__v": 0
+        }
+    ],
+    "totalDocs": 19,
+    "offset": 1,
+    "limit": 2,
+    "totalPages": 10,
+    "page": 1,
+    "pagingCounter": 1,
+    "hasPrevPage": true,
+    "hasNextPage": true,
+    "prevPage": 1,
+    "nextPage": 2
+}

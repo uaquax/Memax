@@ -6,19 +6,21 @@ class MemesHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      const SizedBox(height: 50),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          IconButton(
-              onPressed: () async {
-                Navigator.of(context).pushNamed(MyProfilePage.route);
-              },
-              icon: const Icon(Icons.menu)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search))
-        ],
-      ),
-    ]);
+    return Column(
+      children: <Widget>[
+        const SizedBox(height: 50),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+                onPressed: () async {
+                  Navigator.of(context).pushNamed(MyProfilePage.route);
+                },
+                icon: const Icon(Icons.menu)),
+            IconButton(onPressed: () {}, icon: const Icon(Icons.search))
+          ],
+        ),
+      ],
+    );
   }
 }

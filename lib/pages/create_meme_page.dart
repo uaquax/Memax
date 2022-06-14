@@ -1,7 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:client/pages/memes_page.dart';
+import 'package:client/services/colors.dart';
+import 'package:client/services/server_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreateMemePage extends StatefulWidget {
@@ -14,6 +19,8 @@ class CreateMemePage extends StatefulWidget {
 
 class _CreateMemePageState extends State<CreateMemePage> {
   File? _image;
+
+  var sampleImage;
 
   @override
   void initState() {
@@ -38,7 +45,6 @@ class _CreateMemePageState extends State<CreateMemePage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Image.file(_image ?? File("")),
-          // Create text fields with margin
           const SizedBox(height: 20),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -50,7 +56,6 @@ class _CreateMemePageState extends State<CreateMemePage> {
             ),
           ),
           const SizedBox(height: 10),
-          // Create The textfield with height 200
           Expanded(
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -64,14 +69,25 @@ class _CreateMemePageState extends State<CreateMemePage> {
             ),
           ),
           const SizedBox(height: 20),
-          // Create a button with margin
         ],
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
+            final meme = getBytesFromImage(_image ?? File(""));
+            ServerService.createMeme(meme);
+
             Navigator.of(context).pushNamed(MemesPage.route);
           },
-          child: const Icon(Icons.publish)),
+          backgroundColor: kButtonColor,
+          child: const Icon(
+            Icons.publish,
+            color: Colors.white,
+          )),
     );
+  }
+
+  getBytesFromImage(File image) async {
+    List<int> imageBytes = await image.readAsBytes();
+    return imageBytes;
   }
 }

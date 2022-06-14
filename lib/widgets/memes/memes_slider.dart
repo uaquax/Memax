@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'dart:math';
 import 'package:client/models/author_model.dart';
 import 'package:client/models/comment_model.dart';
 import 'package:client/pages/profile_page.dart';
@@ -22,7 +20,7 @@ class MemesSlider extends StatefulWidget {
 class _MemesSliderState extends State<MemesSlider> {
   final List<MemeModel> _memes = <MemeModel>[];
 
-  final int _maxLoadedMemes = 5;
+  final int _maxLoadedMemes = 2;
   bool _isLoading = false;
   int _lastIndex = 0;
 
@@ -30,9 +28,10 @@ class _MemesSliderState extends State<MemesSlider> {
   void initState() {
     super.initState();
 
-    for (int i = 0; i < _maxLoadedMemes; i++) {
-      _addMeme();
-    }
+    setState(() {
+      _isLoading = true;
+    });
+    _addMemes();
   }
 
   @override
@@ -46,7 +45,6 @@ class _MemesSliderState extends State<MemesSlider> {
             width: MediaQuery.of(context).size.width,
             margin: const EdgeInsets.symmetric(horizontal: 5.0),
             decoration: BoxDecoration(
-              color: Colors.white,
               borderRadius: BorderRadius.circular(10),
               boxShadow: const [
                 BoxShadow(
@@ -98,9 +96,9 @@ class _MemesSliderState extends State<MemesSlider> {
                           _showProfile(meme);
                         }
                       },
-                      child: _isLoading
+                      child: _isLoading || meme.picture.isEmpty
                           ? const Center(child: CircularProgressIndicator())
-                          : Image.asset(meme.url, fit: BoxFit.contain),
+                          : Image.network(meme.picture, fit: BoxFit.contain),
                     ),
                   ),
                   Align(
@@ -110,7 +108,6 @@ class _MemesSliderState extends State<MemesSlider> {
                       onPressed: () {
                         setState(() {
                           _likeMeme(meme);
-                          _addMeme();
                         });
                       },
                       icon: Icon(Icons.favorite,
@@ -143,16 +140,8 @@ class _MemesSliderState extends State<MemesSlider> {
         _lastIndex = index;
       });
 
-      for (int i = 0; i < _maxLoadedMemes; i++) {
-        _addMeme();
-      }
-
-      // sleep(const Duration(seconds: 1));
-      await Future.delayed(const Duration(seconds: 1));
-
-      setState(() {
-        _isLoading = false;
-      });
+      await Future.delayed(const Duration(seconds: 0))
+          .then((value) => {_addMemes()});
     }
   }
 
@@ -247,22 +236,35 @@ class _MemesSliderState extends State<MemesSlider> {
     );
   }
 
-  void _addMeme() {
-    final memeUrls = <String>[
-      "assets/images/meme_1.jpg",
-      "assets/images/meme_2.jpg",
-      "assets/images/meme_3.jpg",
-    ];
+  void _addMemes() async {
+    final loadMemeIndex = _memes.length;
+    _memes.add(
+      MemeModel(
+          type: MemeType.image,
+          picture: "",
+          id: "",
+          author: AuthorModel(id: "", userName: ""),
+          title: "",
+          description: "description"),
+    );
+    final memes = await ServerService.getMemes();
 
     setState(() {
-      _memes.add(MemeModel(
-        title: "Meme?",
-        url: memeUrls[Random().nextInt(memeUrls.length)],
-        author: AuthorModel(id: "fdsfjkdshfjsd", userName: "uaquax"),
-        description: 'What is meme?',
-        id: '1',
-        type: MemeType.image,
-      ));
+      for (final meme in memes) {
+        _memes.add(
+          MemeModel(
+            type: MemeType.image,
+            author: AuthorModel(id: "", userName: meme["author"]),
+            picture: serverUrl + meme["picture"],
+            id: meme["id"] ?? "",
+            description: meme["description"],
+            title: meme["title"],
+          ),
+        );
+      }
+
+      _isLoading = false;
+      _memes.removeAt(loadMemeIndex);
     });
   }
 }

@@ -2,7 +2,6 @@ import 'package:client/services/constants.dart';
 import 'package:client/services/server_service.dart';
 import 'package:client/services/storage_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ProfileInfo extends StatefulWidget {
   final String id;
@@ -60,7 +59,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
             padding: const EdgeInsets.all(24),
             child: Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
+                border: Border.all(color: Colors.white),
                 borderRadius: BorderRadius.circular(8),
               ),
               padding: const EdgeInsets.all(20),
@@ -71,7 +70,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
                 style: TextStyle(
                     color: description == null || description?.isEmpty == true
                         ? kGrey
-                        : Colors.black),
+                        : Colors.white),
               ),
             ),
           ),

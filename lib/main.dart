@@ -18,10 +18,9 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      themeMode: ThemeMode.light,
-      theme: Themes.light,
+      themeMode: ThemeMode.dark,
       darkTheme: Themes.dark,
-      home: const MemesPage(),
+      home: const SignUpPage(),
       routes: {
         SignUpPage.route: (context) => const SignUpPage(),
         SignInPage.route: (context) => const SignInPage(),
@@ -31,53 +30,15 @@ class App extends StatelessWidget {
         CreateMemePage.route: (context) => const CreateMemePage(),
         MyProfilePage.route: (context) => const MyProfilePage(),
       },
-      initialRoute: MemesPage.route,
+      initialRoute: SignUpPage.route,
     );
   }
 }
 
 class Themes {
-  static final ThemeData light = ThemeData(
-    backgroundColor: Colors.white,
-    primaryColor: kButtonColor,
-    primarySwatch: kButtonMaterialColor,
-    textTheme: const TextTheme(
-      bodyText1: TextStyle(color: Colors.black),
-      bodyText2: TextStyle(color: Colors.black),
-      button: TextStyle(color: Colors.black),
-      caption: TextStyle(color: Colors.black),
-      headline1: TextStyle(color: Colors.black),
-      headline2: TextStyle(color: Colors.black),
-      headline3: TextStyle(color: Colors.black),
-      headline4: TextStyle(color: Colors.black),
-      headline5: TextStyle(color: Colors.black),
-      headline6: TextStyle(color: Colors.black),
-      subtitle1: TextStyle(color: Colors.black),
-      subtitle2: TextStyle(color: Colors.black),
-      overline: TextStyle(color: Colors.black),
-    ),
-    iconTheme: const IconThemeData(color: Colors.black),
-  );
-
   static final ThemeData dark = ThemeData(
-    backgroundColor: kBackgroundColor,
-    primaryColor: kButtonColor,
+    brightness: Brightness.dark,
     primarySwatch: kButtonMaterialColor,
-    textTheme: const TextTheme(
-      bodyText1: TextStyle(color: Colors.white),
-      bodyText2: TextStyle(color: Colors.white),
-      button: TextStyle(color: Colors.white),
-      caption: TextStyle(color: Colors.white),
-      headline1: TextStyle(color: Colors.white),
-      headline2: TextStyle(color: Colors.white),
-      headline3: TextStyle(color: Colors.white),
-      headline4: TextStyle(color: Colors.white),
-      headline5: TextStyle(color: Colors.white),
-      headline6: TextStyle(color: Colors.white),
-      subtitle1: TextStyle(color: Colors.white),
-      subtitle2: TextStyle(color: Colors.white),
-      overline: TextStyle(color: Colors.white),
-    ),
-    iconTheme: const IconThemeData(color: Colors.white),
+    primaryColor: kButtonColor,
   );
 }

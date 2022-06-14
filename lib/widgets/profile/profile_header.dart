@@ -20,7 +20,7 @@ class ProfileHeader extends StatelessWidget {
               },
               icon: const Icon(
                 Icons.home,
-                color: kGrey,
+                color: Colors.white,
               ),
               iconSize: 35,
             ),
@@ -30,7 +30,7 @@ class ProfileHeader extends StatelessWidget {
               },
               icon: const Icon(
                 Icons.settings,
-                color: kGrey,
+                color: Colors.white,
               ),
               //make icon bigger
               iconSize: 35,

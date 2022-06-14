@@ -35,9 +35,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
         ProfileInfo(id: id),
         const SizedBox(height: 20),
         Container(
-          height: 1,
+          height: 1.4,
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.black),
+            border: Border.all(color: Colors.white),
             borderRadius: BorderRadius.circular(8),
           ),
         ),
@@ -51,7 +51,11 @@ class _MyProfilePageState extends State<MyProfilePage> {
           onPressed: () {
             Navigator.of(context).pushNamed(CreateMemePage.route);
           },
-          child: const Icon(Icons.add)),
+          backgroundColor: kButtonColor,
+          child: const Icon(
+            Icons.add,
+            color: Colors.white,
+          )),
     );
   }
 }

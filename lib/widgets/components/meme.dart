@@ -4,14 +4,16 @@ import 'package:client/models/meme_model.dart';
 import 'package:client/pages/profile_page.dart';
 import 'package:client/services/constants.dart';
 import 'package:client/services/server_service.dart';
+import 'package:client/services/storage_manager.dart';
 import 'package:client/widgets/components/comment.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 
 class MemeCard extends StatefulWidget {
+  bool isLoading = false;
+  _MemeCardState? memeCardState;
   final MemeModel meme;
-  const MemeCard({Key? key, required this.meme}) : super(key: key);
+  MemeCard({Key? key, required this.meme}) : super(key: key);
 
   @override
   State<MemeCard> createState() => _MemeCardState();
@@ -19,80 +21,126 @@ class MemeCard extends StatefulWidget {
 
 class _MemeCardState extends State<MemeCard> {
   @override
+  void initState() {
+    widget.memeCardState = this;
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final meme = widget.meme;
-    return Column(
-      children: <Widget>[
-        Container(
-            margin: const EdgeInsets.all(20),
-            child: Card(
-              child: ListTile(
-                onTap: () => {
-                  Navigator.of(context).pushNamed(
-                    ProfilePage.route,
-                    arguments: ProfilePageArguments(id: meme.author.id),
-                  )
-                },
-                title: Text(meme.author.userName),
-                leading: const CircleAvatar(
-                  backgroundImage: AssetImage("assets/images/avatar.jpg"),
-                ),
-                trailing: IconButton(
-                  padding: const EdgeInsets.all(5),
-                  iconSize: 20,
-                  icon: Icon(meme.author.isFollowed ? Icons.check : Icons.add),
-                  color: kButtonColor,
-                  onPressed: () {
-                    setState(() {
-                      meme.author.isFollowed = !meme.author.isFollowed;
-                    });
-                  },
+
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.symmetric(horizontal: 5.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            offset: Offset(0.0, 10.0),
+            blurRadius: 10.0,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.all(20),
+              child: Card(
+                child: ListTile(
+                  onTap: () => {_showProfile(meme)},
+                  title: Text(meme.author.userName),
+                  leading: const CircleAvatar(
+                    backgroundImage: AssetImage("assets/images/avatar.jpg"),
+                  ),
+                  trailing: IconButton(
+                    padding: const EdgeInsets.all(5),
+                    iconSize: 20,
+                    icon:
+                        Icon(meme.author.isFollowed ? Icons.check : Icons.add),
+                    color: kButtonColor,
+                    onPressed: () {
+                      setState(() {
+                        meme.author.isFollowed = !meme.author.isFollowed;
+                      });
+                    },
+                  ),
                 ),
               ),
-            )),
-        Expanded(
-          child: GestureDetector(
-            // handle swipe down
-            onVerticalDragEnd: (DragEndDetails details) {
-              if (details.primaryVelocity! < 0) {
-                _showComments(meme);
-              }
-            },
-
-            child: Image.asset(
-              meme.url,
-              fit: BoxFit.contain,
             ),
-          ),
+            Expanded(
+              child: GestureDetector(
+                onDoubleTap: () {
+                  _likeMeme(meme);
+                },
+                onVerticalDragEnd: (details) {
+                  if (details.primaryVelocity! < 0) {
+                    _showComments(meme);
+                  }
+                  if (details.primaryVelocity! > 0) {
+                    _showProfile(meme);
+                  }
+                },
+                child: widget.isLoading || meme.picture.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : Image.network(meme.picture, fit: BoxFit.contain),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: IconButton(
+                iconSize: 40,
+                onPressed: () {
+                  setState(() {
+                    _likeMeme(meme);
+                  });
+                },
+                icon: Icon(Icons.favorite,
+                    color: meme.author.isLiked == true
+                        ? Colors.red
+                        : kButtonColor),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: IconButton(
+                  onPressed: () {
+                    _showComments(meme);
+                  },
+                  icon: const Icon(Icons.keyboard_arrow_down_rounded)),
+            ),
+          ],
         ),
-        Align(
-          alignment: Alignment.bottomRight,
-          child: IconButton(
-            iconSize: 40,
-            onPressed: () {
-              setState(() {
-                meme.author.isLiked = !meme.author.isLiked;
-              });
-            },
-            icon: Icon(Icons.favorite,
-                color: meme.author.isLiked == true ? Colors.red : kButtonColor),
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: IconButton(
-              onPressed: () {
-                _showComments(meme);
-              },
-              icon: const Icon(Icons.keyboard_arrow_down_rounded)),
-        ),
-      ],
+      ),
+    );
+  }
+
+  void setLoading(bool isLoading) {
+    setState(() {
+      widget.isLoading = isLoading;
+    });
+  }
+
+  void _likeMeme(MemeModel meme) {
+    setState(() {
+      meme.author.isLiked = !meme.author.isLiked;
+    });
+  }
+
+  void _showProfile(MemeModel meme) {
+    Navigator.of(context).pushNamed(
+      ProfilePage.route,
+      arguments: ProfilePageArguments(id: meme.author.id),
     );
   }
 
   void _showComments(MemeModel meme) {
     final comments = <CommentModel>[];
-    TextEditingController controller = TextEditingController();
+    TextEditingController _controller = TextEditingController();
 
     showModalBottomSheet(
       context: context,
@@ -125,7 +173,7 @@ class _MemeCardState extends State<MemeCard> {
                     children: [
                       Expanded(
                         child: TextField(
-                          controller: controller,
+                          controller: _controller,
                           decoration: InputDecoration(
                             hintText: "Add comment",
                             border: OutlineInputBorder(
@@ -140,9 +188,8 @@ class _MemeCardState extends State<MemeCard> {
                           color: kButtonColor,
                         ),
                         onPressed: () async {
-                          const storage = FlutterSecureStorage();
                           final user = await ServerService.getUser(
-                              id: await storage.read(key: kId) ?? "");
+                              id: await StorageManager.getId());
                           setState(() {
                             comments.add(CommentModel(
                                 author: AuthorModel(
@@ -151,10 +198,10 @@ class _MemeCardState extends State<MemeCard> {
                                     avatar: user.avatar,
                                     userId: user.userId),
                                 id: "",
-                                text: controller.text,
+                                text: _controller.text,
                                 date: DateFormat('yyyy-MM-dd HH-ss')
                                     .format(DateTime.now())));
-                            controller.text = "";
+                            _controller.text = "";
                           });
                         },
                       ),

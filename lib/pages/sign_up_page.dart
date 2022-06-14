@@ -26,6 +26,23 @@ class _SignUpPageState extends State<SignUpPage> {
       TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+
+    _getUser();
+  }
+
+  void _getUser() async {
+    final id = await StorageManager.getId();
+    if (id.isEmpty != true && id != null) {
+      await Future.delayed(const Duration(milliseconds: 200));
+      if (!mounted) return;
+
+      Navigator.of(context).pushNamed(MemesPage.route);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
