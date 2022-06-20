@@ -1,5 +1,5 @@
 import 'package:client/models/user_model.dart';
-import 'package:client/services/constants.dart';
+import 'package:client/services/config.dart';
 import 'package:client/widgets/profile/profile_header.dart';
 import 'package:flutter/material.dart';
 
@@ -37,7 +37,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         : args.user.biography,
                     style: TextStyle(
                         color: args.user.biography.isEmpty == true
-                            ? kGrey
+                            ? grey
                             : Colors.black),
                   ),
                 ),
@@ -57,7 +57,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
                 Text(
                   "id: $widget.user.userId",
-                  style: const TextStyle(color: kGrey),
+                  style: const TextStyle(color: grey),
                 ),
               ],
             ),
@@ -77,7 +77,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         const SizedBox(height: 15),
         const Text(
           "У данного пользователя пока нет мемов",
-          style: TextStyle(color: kGrey, fontSize: 16),
+          style: TextStyle(color: grey, fontSize: 16),
         )
       ]),
     );

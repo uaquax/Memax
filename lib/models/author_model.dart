@@ -1,4 +1,4 @@
-import 'package:client/services/constants.dart';
+import 'package:client/services/config.dart';
 
 class AuthorModel {
   String id;

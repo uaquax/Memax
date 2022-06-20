@@ -1,7 +1,7 @@
 import 'package:client/models/author_model.dart';
 import 'package:client/models/comment_model.dart';
 import 'package:client/pages/profile_page.dart';
-import 'package:client/services/constants.dart';
+import 'package:client/services/config.dart';
 import 'package:client/services/server_service.dart';
 import 'package:client/services/storage_manager.dart';
 import 'package:client/widgets/components/comment.dart';
@@ -21,23 +21,20 @@ class _MemesSliderState extends State<MemesSlider> {
   final List<MemeModel> _memes = <MemeModel>[];
 
   final int _maxLoadedMemes = 2;
-  bool _isLoading = false;
   int _lastIndex = 0;
 
   @override
   void initState() {
-    super.initState();
+    //_addMemes();
 
-    setState(() {
-      _isLoading = true;
-    });
-    _addMemes();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: PageView(
+        physics: const BouncingScrollPhysics(),
         onPageChanged: _pageChanged,
         scrollDirection: Axis.horizontal,
         children: _memes.map((meme) {
@@ -63,7 +60,7 @@ class _MemesSliderState extends State<MemesSlider> {
                     child: Card(
                       child: ListTile(
                         onTap: () => {_showProfile(meme)},
-                        title: Text(meme.author.userName),
+                        title: Text(meme.author!.userName),
                         leading: const CircleAvatar(
                           backgroundImage:
                               AssetImage("assets/images/avatar.jpg"),
@@ -71,12 +68,14 @@ class _MemesSliderState extends State<MemesSlider> {
                         trailing: IconButton(
                           padding: const EdgeInsets.all(5),
                           iconSize: 20,
-                          icon: Icon(
-                              meme.author.isFollowed ? Icons.check : Icons.add),
-                          color: kButtonColor,
+                          icon: Icon(meme.author!.isFollowed
+                              ? Icons.check
+                              : Icons.add),
+                          color: buttonColor,
                           onPressed: () {
                             setState(() {
-                              meme.author.isFollowed = !meme.author.isFollowed;
+                              meme.author!.isFollowed =
+                                  !meme.author!.isFollowed;
                             });
                           },
                         ),
@@ -96,9 +95,8 @@ class _MemesSliderState extends State<MemesSlider> {
                           _showProfile(meme);
                         }
                       },
-                      child: _isLoading || meme.picture.isEmpty
-                          ? const Center(child: CircularProgressIndicator())
-                          : Image.network(meme.picture, fit: BoxFit.contain),
+                      // child: Image.network(meme.picture ?? "",
+                      //     fit: BoxFit.contain),
                     ),
                   ),
                   Align(
@@ -111,9 +109,9 @@ class _MemesSliderState extends State<MemesSlider> {
                         });
                       },
                       icon: Icon(Icons.favorite,
-                          color: meme.author.isLiked == true
+                          color: meme.author?.isLiked == true
                               ? Colors.red
-                              : kButtonColor),
+                              : buttonColor),
                     ),
                   ),
                   Align(
@@ -136,7 +134,6 @@ class _MemesSliderState extends State<MemesSlider> {
   void _pageChanged(int index) async {
     if (index >= _lastIndex && index % _maxLoadedMemes - 1 == 0) {
       setState(() {
-        _isLoading = true;
         _lastIndex = index;
       });
 
@@ -147,14 +144,14 @@ class _MemesSliderState extends State<MemesSlider> {
 
   void _likeMeme(MemeModel meme) {
     setState(() {
-      meme.author.isLiked = !meme.author.isLiked;
+      meme.author?.isLiked = !meme.author!.isLiked;
     });
   }
 
   void _showProfile(MemeModel meme) {
     Navigator.of(context).pushNamed(
       ProfilePage.route,
-      arguments: ProfilePageArguments(id: meme.author.id),
+      arguments: ProfilePageArguments(id: meme.author?.id ?? ""),
     );
   }
 
@@ -205,7 +202,7 @@ class _MemesSliderState extends State<MemesSlider> {
                       IconButton(
                         icon: const Icon(
                           Icons.send,
-                          color: kButtonColor,
+                          color: buttonColor,
                         ),
                         onPressed: () async {
                           final user = await ServerService.getUser(
@@ -255,15 +252,13 @@ class _MemesSliderState extends State<MemesSlider> {
           MemeModel(
             type: MemeType.image,
             author: AuthorModel(id: "", userName: meme["author"]),
-            picture: serverUrl + meme["picture"],
+            picture: meme["picture"],
             id: meme["id"] ?? "",
             description: meme["description"],
             title: meme["title"],
           ),
         );
       }
-
-      _isLoading = false;
       _memes.removeAt(loadMemeIndex);
     });
   }

@@ -4,6 +4,7 @@ import 'package:client/services/server_service.dart';
 import 'package:client/services/storage_manager.dart';
 import 'package:client/widgets/components/input_box.dart';
 import 'package:client/widgets/components/link_button.dart';
+import 'package:client/widgets/components/password_box.dart';
 import 'package:client/widgets/sign/sign_button.dart';
 import 'package:client/widgets/sign/sign_header.dart';
 import 'package:flutter/material.dart';
@@ -33,23 +34,29 @@ class _SignInPageState extends State<SignInPage> {
               height: 30,
             ),
             SignInput(hintText: "Email", controller: _emailController),
-            SignInput(
+            PasswordBox(
               hintText: "Password",
               controller: _passwordController,
-              isObscureText: true,
+              topPadding: 15,
             ),
             const SizedBox(
-              height: 10,
+              height: 15,
             ),
             SignButton(
               text: "Sign In",
               onPressed: _signIn,
             ),
-            LinkButton(
-                text: "Don't have an account?",
-                onPressed: () {
-                  Navigator.of(context).pushNamed(SignUpPage.route);
-                }),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Don't have an account?"),
+                LinkButton(
+                    text: "Sign Up",
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(SignUpPage.route);
+                    }),
+              ],
+            ),
             const SizedBox(
               height: 10,
             ),

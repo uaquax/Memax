@@ -1,12 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 
+import 'package:client/models/author_model.dart';
+import 'package:client/models/meme_model.dart';
 import 'package:client/pages/memes_page.dart';
 import 'package:client/services/colors.dart';
 import 'package:client/services/server_service.dart';
+import 'package:client/services/storage_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreateMemePage extends StatefulWidget {
@@ -18,9 +18,10 @@ class CreateMemePage extends StatefulWidget {
 }
 
 class _CreateMemePageState extends State<CreateMemePage> {
-  File? _image;
-
-  var sampleImage;
+  XFile? _image;
+  File? _file;
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
 
   @override
   void initState() {
@@ -34,7 +35,8 @@ class _CreateMemePageState extends State<CreateMemePage> {
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     setState(() {
-      _image = File(image?.path ?? "");
+      _image = image;
+      _file = File(image!.path);
     });
   }
 
@@ -42,14 +44,17 @@ class _CreateMemePageState extends State<CreateMemePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Image.file(_image ?? File("")),
-          const SizedBox(height: 20),
+          Image.file(
+            _file ?? File(""),
+            height: MediaQuery.of(context).size.height * 0.5,
+          ),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 10),
-            child: const TextField(
-              decoration: InputDecoration(
+            child: TextField(
+              controller: _titleController,
+              decoration: const InputDecoration(
                 hintText: "Enter meme title here",
                 border: OutlineInputBorder(),
               ),
@@ -59,8 +64,9 @@ class _CreateMemePageState extends State<CreateMemePage> {
           Expanded(
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 10),
-              child: const TextField(
-                decoration: InputDecoration(
+              child: TextField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
                   hintText: "Enter meme description here",
                   border: OutlineInputBorder(),
                 ),
@@ -68,12 +74,16 @@ class _CreateMemePageState extends State<CreateMemePage> {
               ),
             ),
           ),
-          const SizedBox(height: 20),
         ],
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            final meme = getBytesFromImage(_image ?? File(""));
+            final MemeModel meme = MemeModel(
+              type: MemeType.image,
+              title: _titleController.text,
+              description: _descriptionController.text,
+              file: _image,
+            );
             ServerService.createMeme(meme);
 
             Navigator.of(context).pushNamed(MemesPage.route);

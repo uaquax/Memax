@@ -1,10 +1,13 @@
 import 'package:client/models/user_model.dart';
 import 'package:client/pages/sign_in_page.dart';
+import 'package:client/services/config.dart';
 import 'package:client/services/dialogs.dart';
 import 'package:client/pages/memes_page.dart';
 import 'package:client/services/server_service.dart';
 import 'package:client/services/storage_manager.dart';
 import 'package:client/widgets/components/input_box.dart';
+import 'package:client/widgets/components/link_button.dart';
+import 'package:client/widgets/components/password_box.dart';
 import 'package:client/widgets/sign/sign_button.dart';
 import 'package:client/widgets/sign/sign_header.dart';
 import 'package:flutter/material.dart';
@@ -29,12 +32,14 @@ class _SignUpPageState extends State<SignUpPage> {
   void initState() {
     super.initState();
 
-    _getUser();
+    //_getUser();
+    //Navigator.of(context).pushNamed(MemesPage.route);
   }
 
   void _getUser() async {
     final id = await StorageManager.getId();
-    if (id.isEmpty != true && id != null) {
+    //final user = await ServerService.getUser(id: id);
+    if (id.isEmpty != true) {
       await Future.delayed(const Duration(milliseconds: 200));
       if (!mounted) return;
 
@@ -57,28 +62,32 @@ class _SignUpPageState extends State<SignUpPage> {
               hintText: "Username",
               topPadding: 15,
               controller: _usernameController),
-          SignInput(
-              hintText: "Password",
-              topPadding: 15,
-              controller: _passwordController,
-              isObscureText: true),
-          SignInput(
-              hintText: "Confirm password",
-              topPadding: 15,
-              controller: _confirmPasswordController,
-              isObscureText: true),
+          PasswordBox(
+            hintText: "Password",
+            controller: _passwordController,
+            topPadding: 15,
+          ),
+          PasswordBox(
+            hintText: "Confirm password",
+            topPadding: 15,
+            controller: _confirmPasswordController,
+          ),
           const SizedBox(
-            height: 10,
+            height: 15,
           ),
           SignButton(text: "Sign Up", onPressed: _signUp),
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(SignInPage.route);
-              },
-              child: const Text(
-                "Already have an account?",
-                style: TextStyle(decoration: TextDecoration.underline),
-              )),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("Already have an account?"),
+              LinkButton(
+                text: "Sign In",
+                onPressed: () {
+                  Navigator.of(context).pushNamed(SignInPage.route);
+                },
+              )
+            ],
+          ),
         ],
       ),
     );

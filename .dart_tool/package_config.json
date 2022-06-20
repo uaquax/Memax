@@ -128,6 +128,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "flutter_svg",
+      "rootUri": "file:///C:/Users/query/AppData/Local/Pub/Cache/hosted/pub.dartlang.org/flutter_svg-1.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "flutter_test",
       "rootUri": "file:///C:/src/flutter/packages/flutter_test",
       "packageUri": "lib/",
@@ -224,6 +230,24 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "path_drawing",
+      "rootUri": "file:///C:/Users/query/AppData/Local/Pub/Cache/hosted/pub.dartlang.org/path_drawing-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "path_parsing",
+      "rootUri": "file:///C:/Users/query/AppData/Local/Pub/Cache/hosted/pub.dartlang.org/path_parsing-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "petitparser",
+      "rootUri": "file:///C:/Users/query/AppData/Local/Pub/Cache/hosted/pub.dartlang.org/petitparser-5.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
       "name": "plugin_platform_interface",
       "rootUri": "file:///C:/Users/query/AppData/Local/Pub/Cache/hosted/pub.dartlang.org/plugin_platform_interface-2.1.2",
       "packageUri": "lib/",
@@ -284,13 +308,19 @@
       "languageVersion": "2.14"
     },
     {
+      "name": "xml",
+      "rootUri": "file:///C:/Users/query/AppData/Local/Pub/Cache/hosted/pub.dartlang.org/xml-6.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "client",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     }
   ],
-  "generated": "2022-06-11T09:55:02.337802Z",
+  "generated": "2022-06-18T11:26:53.036037Z",
   "generator": "pub",
   "generatorVersion": "2.17.1"
 }

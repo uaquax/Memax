@@ -2,7 +2,7 @@ import 'package:client/models/author_model.dart';
 import 'package:client/models/comment_model.dart';
 import 'package:client/models/meme_model.dart';
 import 'package:client/pages/profile_page.dart';
-import 'package:client/services/constants.dart';
+import 'package:client/services/config.dart';
 import 'package:client/services/server_service.dart';
 import 'package:client/services/storage_manager.dart';
 import 'package:client/widgets/components/comment.dart';
@@ -53,7 +53,7 @@ class _MemeCardState extends State<MemeCard> {
               child: Card(
                 child: ListTile(
                   onTap: () => {_showProfile(meme)},
-                  title: Text(meme.author.userName),
+                  title: Text(meme.author!.userName),
                   leading: const CircleAvatar(
                     backgroundImage: AssetImage("assets/images/avatar.jpg"),
                   ),
@@ -61,11 +61,11 @@ class _MemeCardState extends State<MemeCard> {
                     padding: const EdgeInsets.all(5),
                     iconSize: 20,
                     icon:
-                        Icon(meme.author.isFollowed ? Icons.check : Icons.add),
-                    color: kButtonColor,
+                        Icon(meme.author!.isFollowed ? Icons.check : Icons.add),
+                    color: buttonColor,
                     onPressed: () {
                       setState(() {
-                        meme.author.isFollowed = !meme.author.isFollowed;
+                        meme.author!.isFollowed = !meme.author!.isFollowed;
                       });
                     },
                   ),
@@ -85,9 +85,9 @@ class _MemeCardState extends State<MemeCard> {
                     _showProfile(meme);
                   }
                 },
-                child: widget.isLoading || meme.picture.isEmpty
+                child: widget.isLoading || meme.picture!.isEmpty
                     ? const Center(child: CircularProgressIndicator())
-                    : Image.network(meme.picture, fit: BoxFit.contain),
+                    : Image.network(meme.picture ?? "", fit: BoxFit.contain),
               ),
             ),
             Align(
@@ -100,9 +100,9 @@ class _MemeCardState extends State<MemeCard> {
                   });
                 },
                 icon: Icon(Icons.favorite,
-                    color: meme.author.isLiked == true
+                    color: meme.author?.isLiked == true
                         ? Colors.red
-                        : kButtonColor),
+                        : buttonColor),
               ),
             ),
             Align(
@@ -127,14 +127,14 @@ class _MemeCardState extends State<MemeCard> {
 
   void _likeMeme(MemeModel meme) {
     setState(() {
-      meme.author.isLiked = !meme.author.isLiked;
+      meme.author?.isLiked = !meme.author!.isLiked;
     });
   }
 
   void _showProfile(MemeModel meme) {
     Navigator.of(context).pushNamed(
       ProfilePage.route,
-      arguments: ProfilePageArguments(id: meme.author.id),
+      arguments: ProfilePageArguments(id: meme.author!.id),
     );
   }
 
@@ -185,7 +185,7 @@ class _MemeCardState extends State<MemeCard> {
                       IconButton(
                         icon: const Icon(
                           Icons.send,
-                          color: kButtonColor,
+                          color: buttonColor,
                         ),
                         onPressed: () async {
                           final user = await ServerService.getUser(

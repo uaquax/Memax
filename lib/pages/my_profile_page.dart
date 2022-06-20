@@ -1,5 +1,5 @@
 import 'package:client/pages/create_meme_page.dart';
-import 'package:client/services/constants.dart';
+import 'package:client/services/config.dart';
 import 'package:client/services/storage_manager.dart';
 import 'package:client/widgets/profile/profile_header.dart';
 import 'package:client/widgets/profile/profile_info.dart';
@@ -24,7 +24,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   void _getId() async {
-    id = await StorageManager.getId();
+    final _id = await StorageManager.getId();
+    setState(() {
+      id = _id;
+    });
   }
 
   @override
@@ -44,14 +47,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
         const SizedBox(height: 15),
         const Text(
           "У данного пользователя пока нет мемов",
-          style: TextStyle(color: kGrey, fontSize: 16),
+          style: TextStyle(color: grey, fontSize: 16),
         )
       ]),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).pushNamed(CreateMemePage.route);
           },
-          backgroundColor: kButtonColor,
+          backgroundColor: buttonColor,
           child: const Icon(
             Icons.add,
             color: Colors.white,

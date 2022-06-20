@@ -12,7 +12,10 @@ class LinkButton extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
           text,
-          style: const TextStyle(decoration: TextDecoration.underline),
+          style: const TextStyle(
+            decoration: TextDecoration.underline,
+            color: Colors.blue,
+          ),
         ));
   }
 }

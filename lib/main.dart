@@ -3,7 +3,7 @@ import 'package:client/pages/memes_page.dart';
 import 'package:client/pages/my_profile_page.dart';
 import 'package:client/pages/settings_page.dart';
 import 'package:client/pages/sign_in_page.dart';
-import 'package:client/services/colors.dart';
+import 'package:client/services/config.dart';
 import 'package:flutter/material.dart';
 import 'pages/profile_page.dart';
 import 'pages/sign_up_page.dart';
@@ -30,15 +30,17 @@ class App extends StatelessWidget {
         CreateMemePage.route: (context) => const CreateMemePage(),
         MyProfilePage.route: (context) => const MyProfilePage(),
       },
-      initialRoute: SignUpPage.route,
+      initialRoute: MemesPage.route,
     );
   }
 }
 
 class Themes {
-  static final ThemeData dark = ThemeData(
+  static ThemeData dark = ThemeData(
     brightness: Brightness.dark,
-    primarySwatch: kButtonMaterialColor,
-    primaryColor: kButtonColor,
+    scaffoldBackgroundColor: backgroundColor,
+    primarySwatch: ThemeColors.buttonMaterialColor,
+    splashColor: splashColor,
+    primaryColor: splashColor,
   );
 }

@@ -1,4 +1,4 @@
-import 'package:client/services/constants.dart';
+import 'package:client/services/config.dart';
 import 'package:client/widgets/profile/profile_header.dart';
 import 'package:client/widgets/profile/profile_info.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
       const SizedBox(height: 15),
       const Text(
         "У данного пользователя пока нет мемов",
-        style: TextStyle(color: kGrey, fontSize: 16),
+        style: TextStyle(color: grey, fontSize: 16),
       )
     ]));
   }

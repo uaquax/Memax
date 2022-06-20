@@ -1,4 +1,4 @@
-import 'package:client/services/constants.dart';
+import 'package:client/services/config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class StorageManager {

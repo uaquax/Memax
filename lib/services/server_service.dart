@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:client/models/meme_model.dart';
 import 'package:client/models/user_model.dart';
-import 'package:client/services/constants.dart';
+import 'package:client/services/config.dart';
+import 'package:client/services/storage_manager.dart';
 import 'package:http/http.dart' as http;
 
 class ServerService {
@@ -80,16 +82,16 @@ class ServerService {
         Uri.parse(memesUrl),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization':
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBxQG1haWwucnUiLCJpZCI6IjYyYTMzMmU0YWJkMTY4M2E5YWM4MjEyNSIsImlzQWN0aXZhdGVkIjpmYWxzZSwidXNlcm5hbWUiOiJzZGFzZGFzZGFzZCIsImF2YXRhciI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTAwMC9kZWZhdWx0LmpwZyIsImJpb2dyYXBoeSI6IiIsImNyZWF0aW9uRGF0ZSI6IjIwMjItMDYtMTAiLCJpYXQiOjE2NTUyMDEzMDcsImV4cCI6MTY1NTIwMjIwN30.Cj4ODAbCnXnhDQjNyYstN1jcXjk8bH0ZF7EBZawaA84"
+          'Authorization': authorizationToken
         },
       );
 
       if (response.statusCode == 200 && response.body is String) {
-        print(response);
+        print(
+            "Type is String = -> ${response.body is String} \n\n ${response.body}");
         final responseJson =
-            response.body is String ? await json.decode(response.body) : "";
-        return responseJson["docs"];
+            response is String ? await json.decode(response.body) : "";
+        return responseJson;
       } else {
         throw Exception(response.statusCode.toString());
       }
@@ -98,9 +100,30 @@ class ServerService {
     }
   }
 
-  static createMeme(List<int> meme) async {
+  static createMeme(MemeModel meme) async {
     try {
-      final response = await http.post(Uri.parse(createMemeUrl), body: meme);
+      final String id = await StorageManager.getId();
+      final Map<String, dynamic> body = <String, dynamic>{
+        "title": meme.title,
+        "description": meme.description,
+        "author": id,
+        "picture": meme.file!.path,
+      };
+
+      final http.Response response = await http.post(
+        Uri.parse(createMemeUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': authorizationToken
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        return null;
+      } else {
+        throw Exception(response.statusCode.toString());
+      }
     } catch (e) {
       throw Exception("$e");
     }

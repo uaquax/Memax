@@ -1,4 +1,4 @@
-#Tue Jun 14 20:40:09 CST 2022
+#Mon Jun 20 17:14:33 CST 2022
 base.0=D\:\\Programming\\MemeMedia\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
 renamed.0=classes.dex
 path.0=classes.dex

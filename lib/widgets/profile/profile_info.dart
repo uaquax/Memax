@@ -1,7 +1,8 @@
-import 'package:client/services/constants.dart';
+import 'package:client/services/config.dart';
 import 'package:client/services/server_service.dart';
 import 'package:client/services/storage_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ProfileInfo extends StatefulWidget {
   final String id;
@@ -32,70 +33,71 @@ class _ProfileInfoState extends State<ProfileInfo> {
   void _getInfo() async {
     final user = await ServerService.getUser(id: widget.id);
     isOwner = user.userId == await StorageManager.getId();
-    setState(() {
-      description = user.biography;
-      userName = user.userName;
-      biography = user.biography.isEmpty ? "" : user.biography;
-      avatar = user.avatar;
-      userId = user.userId;
 
-      if (user.userName != "") {
+    description = user.biography;
+    userName = user.userName;
+    biography = user.biography.isEmpty ? "" : user.biography;
+    avatar = user.avatar;
+    userId = user.userId;
+
+    if (user.userName != "") {
+      setState(() {
         isLoading = false;
-      }
-    });
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // return isLoading == true
-    //     ? const Center(
-    //         child: SpinKitCircle(size: 120, color: kGrey),
-    //       )
-    //     :
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white),
-                borderRadius: BorderRadius.circular(8),
+    return isLoading == true
+        ? const Center(
+            child: SpinKitCircle(size: 120, color: grey),
+          )
+        : Row(
+            children: <Widget>[
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.all(20),
+                    child: Text(
+                      description == null || description?.isEmpty == true
+                          ? "Нет описания"
+                          : description ?? "Нет описания",
+                      style: TextStyle(
+                          color: description == null ||
+                                  description?.isEmpty == true
+                              ? grey
+                              : Colors.white),
+                    ),
+                  ),
+                ),
               ),
-              padding: const EdgeInsets.all(20),
-              child: Text(
-                description == null || description?.isEmpty == true
-                    ? "Нет описания"
-                    : description ?? "Нет описания",
-                style: TextStyle(
-                    color: description == null || description?.isEmpty == true
-                        ? kGrey
-                        : Colors.white),
+              Column(
+                children: <Widget>[
+                  const CircleAvatar(
+                    radius: 70,
+                    backgroundImage: AssetImage("assets/images/avatar.jpg"),
+                  ),
+                  const SizedBox(height: 15),
+                  const Text("uaquax"),
+                  Text(
+                    "id: $userId",
+                    style: const TextStyle(color: grey),
+                  ),
+                  ElevatedButton(
+                      onPressed: () {},
+                      child: Text(isOwner ? "Редактировать" : "Подписаться")),
+                ],
               ),
-            ),
-          ),
-        ),
-        Column(
-          children: <Widget>[
-            const CircleAvatar(
-              radius: 70,
-              backgroundImage: AssetImage("assets/images/avatar.jpg"),
-            ),
-            const SizedBox(height: 15),
-            const Text("uaquax"),
-            Text(
-              "id: $userId",
-              style: const TextStyle(color: kGrey),
-            ),
-            ElevatedButton(
-                onPressed: () {},
-                child: Text(isOwner ? "Редактировать" : "Подписаться")),
-          ],
-        ),
-        const SizedBox(
-          width: 20,
-        )
-      ],
-    );
+              const SizedBox(
+                width: 20,
+              )
+            ],
+          );
   }
 }
