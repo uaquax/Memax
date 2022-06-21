@@ -18,7 +18,6 @@ class _ProfileInfoState extends State<ProfileInfo> {
   String? biography;
   String avatar = defaultAvatarUrl;
   String? userId;
-  String? description;
 
   bool isLoading = true;
   bool isOwner = false;
@@ -32,15 +31,16 @@ class _ProfileInfoState extends State<ProfileInfo> {
 
   void _getInfo() async {
     final user = await ServerService.getUser(id: widget.id);
-    isOwner = user.userId == await StorageManager.getId();
 
-    description = user.biography;
-    userName = user.userName;
-    biography = user.biography.isEmpty ? "" : user.biography;
-    avatar = user.avatar;
-    userId = user.userId;
+    print(userName?.isEmpty);
 
-    if (user.userName != "") {
+    userName = user["username"];
+    biography = user["biography"];
+    avatar = user["avatar"];
+
+    print(userName?.isEmpty);
+
+    if (userName?.isEmpty == false) {
       setState(() {
         isLoading = false;
       });
@@ -65,12 +65,11 @@ class _ProfileInfoState extends State<ProfileInfo> {
                     ),
                     padding: const EdgeInsets.all(20),
                     child: Text(
-                      description == null || description?.isEmpty == true
+                      biography == null || biography?.isEmpty == true
                           ? "Нет описания"
-                          : description ?? "Нет описания",
+                          : biography ?? "Нет описания",
                       style: TextStyle(
-                          color: description == null ||
-                                  description?.isEmpty == true
+                          color: biography == null || biography?.isEmpty == true
                               ? grey
                               : Colors.white),
                     ),
@@ -84,7 +83,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
                     backgroundImage: AssetImage("assets/images/avatar.jpg"),
                   ),
                   const SizedBox(height: 15),
-                  const Text("uaquax"),
+                  Text(userName ?? ""),
                   Text(
                     "id: $userId",
                     style: const TextStyle(color: grey),

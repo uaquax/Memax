@@ -30,7 +30,7 @@ class App extends StatelessWidget {
         CreateMemePage.route: (context) => const CreateMemePage(),
         MyProfilePage.route: (context) => const MyProfilePage(),
       },
-      initialRoute: MemesPage.route,
+      initialRoute: SignUpPage.route,
     );
   }
 }

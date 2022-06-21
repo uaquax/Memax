@@ -3,27 +3,32 @@ import 'package:client/models/meme_model.dart';
 import 'package:client/models/user_model.dart';
 import 'package:client/services/config.dart';
 import 'package:client/services/storage_manager.dart';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 
 class ServerService {
-  static Future<UserModel> signUp({required UserModel user}) async {
+  static final Dio _dio = Dio();
+  static signUp({required UserModel user}) async {
     try {
-      final response = await http.post(
-        Uri.parse(signUpUrl),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
+      FormData data = FormData.fromMap(
+        {
+          'email': user.email,
+          'username': user.userName,
+          'password': user.password,
         },
-        body: jsonEncode({
-          "email": user.email,
-          "username": user.userName,
-          "password": user.password,
-        }),
       );
-      print(response.body);
+      final response = await _dio.post(
+        signUpUrl,
+        data: data,
+        options: Options(
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+        ),
+      );
+
       if (response.statusCode == 200) {
-        final responseJson =
-            response.body is String ? await json.decode(response.body) : null;
-        return UserModel.fromJson(responseJson['user']);
+        return response.data;
       } else {
         throw Exception(response.statusCode.toString());
       }
@@ -32,15 +37,19 @@ class ServerService {
     }
   }
 
-  static Future<UserModel> getUser({required String id}) async {
+  static getUser({required String id}) async {
     if (id.isEmpty == false) {
       try {
-        final response = await http.get(Uri.parse(usersUrl + id));
+        final response = await _dio.get(
+          usersUrl + id,
+          options: Options(
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+          ),
+        );
         if (response.statusCode == 200) {
-          final Map<String, dynamic> responseJson = response.body is String
-              ? await json.decode(response.body)["user"]
-              : null;
-          return UserModel.fromJson(responseJson);
+          return response.data;
         } else {
           throw Exception(response.statusCode.toString());
         }
@@ -48,7 +57,7 @@ class ServerService {
         throw Exception("$e");
       }
     } else {
-      return UserModel(userName: "");
+      return null;
     }
   }
 
@@ -78,20 +87,25 @@ class ServerService {
 
   static getMemes() async {
     try {
-      final response = await http.get(
-        Uri.parse(memesUrl),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': authorizationToken
-        },
+      // final response = await http.get(
+      //   Uri.parse(memesUrl),
+      //   headers: <String, String>{
+      //     'Content-Type': 'application/json; charset=UTF-8',
+      //     'Authorization': 'Bearer ${await StorageManager.getJWT()}',
+      //   },
+      // );
+      final response = await _dio.get(
+        memesUrl,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer ${await StorageManager.getJWT()}',
+          },
+        ),
       );
 
-      if (response.statusCode == 200 && response.body is String) {
-        print(
-            "Type is String = -> ${response.body is String} \n\n ${response.body}");
-        final responseJson =
-            response is String ? await json.decode(response.body) : "";
-        return responseJson;
+      if (response.statusCode == 200) {
+        return response.data;
       } else {
         throw Exception(response.statusCode.toString());
       }
@@ -102,21 +116,27 @@ class ServerService {
 
   static createMeme(MemeModel meme) async {
     try {
-      final String id = await StorageManager.getId();
-      final Map<String, dynamic> body = <String, dynamic>{
+      final accessToken = await StorageManager.getJWT();
+      FormData formData = FormData.fromMap({
         "title": meme.title,
         "description": meme.description,
-        "author": id,
-        "picture": meme.file!.path,
-      };
-
-      final http.Response response = await http.post(
-        Uri.parse(createMemeUrl),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': authorizationToken
-        },
-        body: jsonEncode(body),
+      });
+      formData.files.add(
+        MapEntry(
+          "picture",
+          await MultipartFile.fromFile(meme.file!.path,
+              filename: meme.file!.path.split("/").last),
+        ),
+      );
+      final response = await _dio.post(
+        createMemeUrl,
+        data: formData,
+        options: Options(
+          contentType: "multipart/form-data",
+          headers: {
+            'Authorization': "Bearer $accessToken",
+          },
+        ),
       );
 
       if (response.statusCode == 200) {

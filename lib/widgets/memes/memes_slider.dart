@@ -25,7 +25,7 @@ class _MemesSliderState extends State<MemesSlider> {
 
   @override
   void initState() {
-    //_addMemes();
+    _addMemes();
 
     super.initState();
   }
@@ -95,8 +95,8 @@ class _MemesSliderState extends State<MemesSlider> {
                           _showProfile(meme);
                         }
                       },
-                      // child: Image.network(meme.picture ?? "",
-                      //     fit: BoxFit.contain),
+                      child: Image.network(meme.picture ?? "",
+                          fit: BoxFit.contain),
                     ),
                   ),
                   Align(
@@ -234,32 +234,22 @@ class _MemesSliderState extends State<MemesSlider> {
   }
 
   void _addMemes() async {
-    final loadMemeIndex = _memes.length;
-    _memes.add(
-      MemeModel(
-          type: MemeType.image,
-          picture: "",
-          id: "",
-          author: AuthorModel(id: "", userName: ""),
-          title: "",
-          description: "description"),
-    );
     final memes = await ServerService.getMemes();
 
-    setState(() {
-      for (final meme in memes) {
-        _memes.add(
-          MemeModel(
-            type: MemeType.image,
-            author: AuthorModel(id: "", userName: meme["author"]),
-            picture: meme["picture"],
-            id: meme["id"] ?? "",
-            description: meme["description"],
-            title: meme["title"],
-          ),
-        );
-      }
-      _memes.removeAt(loadMemeIndex);
-    });
+    for (final meme in memes) {
+      final author = await ServerService.getUser(id: meme["author"]);
+      _memes.add(
+        MemeModel(
+          type: MemeType.image,
+          author: AuthorModel(id: author["id"], userName: author["username"]),
+          picture: meme["picture"],
+          id: meme["id"] ?? "",
+          description: meme["description"],
+          title: meme["title"],
+        ),
+      );
+    }
+
+    setState(() {});
   }
 }

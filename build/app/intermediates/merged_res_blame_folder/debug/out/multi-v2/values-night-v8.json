@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "D:\\Programming\\MemeMedia\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-night-v8\\values-night-v8.xml",
+            "outputFile": "D:\\Programming\\Projects\\Memax\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-night-v8\\values-night-v8.xml",
             "map": [
                 {
-                    "source": "D:\\Programming\\MemeMedia\\android\\app\\src\\main\\res\\values-night\\styles.xml",
+                    "source": "D:\\Programming\\Projects\\Memax\\android\\app\\src\\main\\res\\values-night\\styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",

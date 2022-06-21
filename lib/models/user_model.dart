@@ -8,20 +8,22 @@ class UserModel {
   String avatar;
   String biography = "";
 
-  UserModel({
-    required this.userName,
-    this.email = "",
-    this.password = "",
-    this.userId = "",
-    this.avatar = "https://memax.tublerzonestudi.repl.co/default.jpg",
-    this.id,
-  });
+  UserModel(
+      {required this.userName,
+      this.email = "",
+      this.password = "",
+      this.userId = "",
+      this.avatar = "https://memax.tublerzonestudi.repl.co/default.jpg",
+      this.id,
+      this.jwt = ""});
 
-  static UserModel fromJson(Map<String, dynamic> json) {
+  static UserModel fromJson(json) {
     return UserModel(
-        id: json['id'],
-        userName: json['username'],
-        email: json['email'],
-        avatar: json['avatar']);
+      id: json["user"]['id'],
+      userName: json["user"]['username'],
+      email: json["user"]['email'],
+      avatar: json["user"]['avatar'],
+      jwt: json['accessToken'],
+    );
   }
 }

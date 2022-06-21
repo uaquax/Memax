@@ -13,8 +13,8 @@
 13         to allow setting breakpoints, to provide hot reload, etc.
 14    -->
 15    <uses-permission android:name="android.permission.INTERNET" />
-15-->D:\Programming\MemeMedia\android\app\src\debug\AndroidManifest.xml:7:5-66
-15-->D:\Programming\MemeMedia\android\app\src\debug\AndroidManifest.xml:7:22-64
+15-->D:\Programming\Projects\Memax\android\app\src\debug\AndroidManifest.xml:7:5-66
+15-->D:\Programming\Projects\Memax\android\app\src\debug\AndroidManifest.xml:7:22-64
 16
 17    <application
 18        android:name="android.app.Application"
@@ -57,21 +57,21 @@
 54            android:value="2" />
 55
 56        <provider
-56-->[:image_picker_android] D:\Programming\MemeMedia\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:10:9-18:20
+56-->[:image_picker_android] D:\Programming\Projects\Memax\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:10:9-18:20
 57            android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider"
-57-->[:image_picker_android] D:\Programming\MemeMedia\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:11:13-82
+57-->[:image_picker_android] D:\Programming\Projects\Memax\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:11:13-82
 58            android:authorities="com.example.client.flutter.image_provider"
-58-->[:image_picker_android] D:\Programming\MemeMedia\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:12:13-74
+58-->[:image_picker_android] D:\Programming\Projects\Memax\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:12:13-74
 59            android:exported="false"
-59-->[:image_picker_android] D:\Programming\MemeMedia\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:13:13-37
+59-->[:image_picker_android] D:\Programming\Projects\Memax\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:13:13-37
 60            android:grantUriPermissions="true" >
-60-->[:image_picker_android] D:\Programming\MemeMedia\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:14:13-47
+60-->[:image_picker_android] D:\Programming\Projects\Memax\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:14:13-47
 61            <meta-data
-61-->[:image_picker_android] D:\Programming\MemeMedia\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:15:13-17:75
+61-->[:image_picker_android] D:\Programming\Projects\Memax\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:15:13-17:75
 62                android:name="android.support.FILE_PROVIDER_PATHS"
-62-->[:image_picker_android] D:\Programming\MemeMedia\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:16:17-67
+62-->[:image_picker_android] D:\Programming\Projects\Memax\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:16:17-67
 63                android:resource="@xml/flutter_image_picker_file_paths" />
-63-->[:image_picker_android] D:\Programming\MemeMedia\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:17:17-72
+63-->[:image_picker_android] D:\Programming\Projects\Memax\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:17:17-72
 64        </provider>
 65
 66        <uses-library

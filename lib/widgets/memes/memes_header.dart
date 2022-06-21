@@ -16,16 +16,12 @@ class MemesHeader extends StatelessWidget {
           children: <Widget>[
             IconButton(
                 onPressed: () async {
-                  Navigator.of(context).pushNamed(MyProfilePage.route);
+                  Navigator.of(context).pushNamed(MyProfilePage.route,
+                      arguments: ProfilePageArguments(
+                          id: await StorageManager.getId()));
                 },
                 icon: const Icon(Icons.menu)),
-            IconButton(
-                onPressed: () async {
-                  final id = await StorageManager.getId();
-                  Navigator.of(context).pushNamed(ProfilePage.route,
-                      arguments: ProfilePageArguments(id: id));
-                },
-                icon: const Icon(Icons.search))
+            IconButton(onPressed: () {}, icon: const Icon(Icons.search))
           ],
         ),
       ],

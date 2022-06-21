@@ -1,4 +1,5 @@
 import 'package:client/pages/create_meme_page.dart';
+import 'package:client/pages/profile_page.dart';
 import 'package:client/services/config.dart';
 import 'package:client/services/storage_manager.dart';
 import 'package:client/widgets/profile/profile_header.dart';
@@ -15,27 +16,19 @@ class MyProfilePage extends StatefulWidget {
 }
 
 class _MyProfilePageState extends State<MyProfilePage> {
-  String id = "";
   @override
   void initState() {
     super.initState();
-
-    _getId();
-  }
-
-  void _getId() async {
-    final _id = await StorageManager.getId();
-    setState(() {
-      id = _id;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)?.settings.arguments as ProfilePageArguments;
     return Scaffold(
       body: Column(children: <Widget>[
         const ProfileHeader(),
-        ProfileInfo(id: id),
+        ProfileInfo(id: args.id),
         const SizedBox(height: 20),
         Container(
           height: 1.4,

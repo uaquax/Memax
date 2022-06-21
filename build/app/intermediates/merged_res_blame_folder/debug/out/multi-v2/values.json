@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "D:\\Programming\\MemeMedia\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values\\values.xml",
+            "outputFile": "D:\\Programming\\Projects\\Memax\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values\\values.xml",
             "map": [
                 {
                     "source": "C:\\Users\\query\\.gradle\\caches\\transforms-3\\49bc944d29f70d45aa5add8e43e3247e\\transformed\\jetified-window-1.0.0-beta04\\res\\values\\values.xml",
@@ -20,6 +20,25 @@
                         "endLines": "7,8,9,10,72,122,126,246,263,271",
                         "endColumns": "11,59,51,44,59,24,24,24,24,24",
                         "endOffsets": "289,349,401,446,4387,7292,7489,11978,13092,13485"
+                    }
+                },
+                {
+                    "source": "D:\\Programming\\Projects\\Memax\\android\\app\\src\\main\\res\\values\\styles.xml",
+                    "from": {
+                        "startLines": "3,14",
+                        "startColumns": "4,4",
+                        "startOffsets": "176,832",
+                        "endLines": "7,16",
+                        "endColumns": "12,12",
+                        "endOffsets": "483,998"
+                    },
+                    "to": {
+                        "startLines": "94,99",
+                        "startColumns": "4,4",
+                        "startOffsets": "5505,5813",
+                        "endLines": "98,101",
+                        "endColumns": "12,12",
+                        "endOffsets": "5808,5977"
                     }
                 },
                 {
@@ -56,25 +75,6 @@
                         "startOffsets": "5321",
                         "endColumns": "42",
                         "endOffsets": "5359"
-                    }
-                },
-                {
-                    "source": "D:\\Programming\\MemeMedia\\android\\app\\src\\main\\res\\values\\styles.xml",
-                    "from": {
-                        "startLines": "3,14",
-                        "startColumns": "4,4",
-                        "startOffsets": "176,832",
-                        "endLines": "7,16",
-                        "endColumns": "12,12",
-                        "endOffsets": "483,998"
-                    },
-                    "to": {
-                        "startLines": "94,99",
-                        "startColumns": "4,4",
-                        "startOffsets": "5505,5813",
-                        "endLines": "98,101",
-                        "endColumns": "12,12",
-                        "endOffsets": "5808,5977"
                     }
                 }
             ]

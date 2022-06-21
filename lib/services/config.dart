@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
-const String serverUrl = "https://memax.lebedaefff.repl.co/";
-const String usersUrl = "https://memax.lebedaefff.repl.co/api/users/";
-const String signUpUrl = "https://memax.lebedaefff.repl.co/api/sign-up/";
-const String signInUrl = "https://memax.lebedaefff.repl.co/api/sign-in/";
-const String defaultAvatarUrl = "https://memax.lebedaefff.repl.co/default.jpg";
-const String memesUrl = "https://memax.lebedaefff.repl.co/api/posts";
-const String createMemeUrl =
-    "https://memax.lebedaefff.repl.co/api/create-post/";
+const String baseUrl = "https://memax.lebedaefff.repl.co/api/";
+const String usersUrl = "${baseUrl}user/";
+const String signUpUrl = "${baseUrl}sign-up/";
+const String signInUrl = "${baseUrl}sign-in/";
+const String defaultAvatarUrl = "${baseUrl}default.jpg";
+const String memesUrl = "${baseUrl}posts/";
+const String createMemeUrl = "${baseUrl}create-post/";
 
 const Color splashColor = Color.fromARGB(255, 68, 71, 90);
 const Color buttonColor = Color.fromARGB(255, 113, 116, 147);
@@ -17,9 +16,6 @@ const Color grey = Color.fromARGB(255, 128, 128, 128);
 
 const String kId = "id";
 const String kJWT = "jwt";
-
-const String authorizationToken =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBxQG1haWwucnUiLCJpZCI6IjYyYTMzMmU0YWJkMTY4M2E5YWM4MjEyNSIsImlzQWN0aXZhdGVkIjpmYWxzZSwidXNlcm5hbWUiOiJzZGFzZGFzZGFzZCIsImF2YXRhciI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTAwMC9kZWZhdWx0LmpwZyIsImJpb2dyYXBoeSI6IiIsImNyZWF0aW9uRGF0ZSI6IjIwMjItMDYtMTAiLCJpYXQiOjE2NTUyMDEzMDcsImV4cCI6MTY1NTIwMjIwN30.Cj4ODAbCnXnhDQjNyYstN1jcXjk8bH0ZF7EBZawaA84";
 
 class ThemeColors {
   static const Map<int, Color> _buttonColor = {

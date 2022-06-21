@@ -33,12 +33,10 @@ class _SignUpPageState extends State<SignUpPage> {
     super.initState();
 
     //_getUser();
-    //Navigator.of(context).pushNamed(MemesPage.route);
   }
 
   void _getUser() async {
     final id = await StorageManager.getId();
-    //final user = await ServerService.getUser(id: id);
     if (id.isEmpty != true) {
       await Future.delayed(const Duration(milliseconds: 200));
       if (!mounted) return;
@@ -100,15 +98,15 @@ class _SignUpPageState extends State<SignUpPage> {
         _emailController.text.isNotEmpty &&
         _emailController.text.isValidEmail()) {
       try {
-        final UserModel user = await ServerService.signUp(
+        final user = await ServerService.signUp(
             user: UserModel(
                 email: _emailController.text,
                 userName: _usernameController.text,
                 password: _passwordController.text,
                 userId: ""));
 
-        StorageManager.saveId(user.id ?? "");
-        StorageManager.saveJWT(user.jwt ?? "");
+        StorageManager.saveId(user["user"]["id"] ?? "");
+        StorageManager.saveJWT(user["accessToken"] ?? "");
 
         showSuccess(
             context: context,
