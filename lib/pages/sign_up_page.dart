@@ -1,9 +1,10 @@
+import 'package:client/models/auth_model.dart';
 import 'package:client/models/user_model.dart';
 import 'package:client/pages/sign_in_page.dart';
 import 'package:client/services/config.dart';
 import 'package:client/services/dialogs.dart';
 import 'package:client/pages/memes_page.dart';
-import 'package:client/services/server_service.dart';
+import 'package:client/services/api.dart';
 import 'package:client/services/storage_manager.dart';
 import 'package:client/widgets/components/input_box.dart';
 import 'package:client/widgets/components/link_button.dart';
@@ -28,92 +29,100 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
 
-    //_getUser();
+    _getUser();
   }
 
   void _getUser() async {
-    final id = await StorageManager.getId();
-    if (id.isEmpty != true) {
-      await Future.delayed(const Duration(milliseconds: 200));
+    setState(() {
+      isLoading = true;
+    });
+
+    final refreshToken = await StorageManager.getRefreshToken();
+
+    if (refreshToken.isEmpty == false) {
+      await Future.delayed(const Duration(milliseconds: 0));
       if (!mounted) return;
 
       Navigator.of(context).pushNamed(MemesPage.route);
+      setState(() {
+        isLoading = false;
+      });
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const SizedBox(height: 10),
-          const SignHeader(),
-          SignInput(
-              hintText: "Email", topPadding: 15, controller: _emailController),
-          SignInput(
-              hintText: "Username",
-              topPadding: 15,
-              controller: _usernameController),
-          PasswordBox(
-            hintText: "Password",
-            controller: _passwordController,
-            topPadding: 15,
-          ),
-          PasswordBox(
-            hintText: "Confirm password",
-            topPadding: 15,
-            controller: _confirmPasswordController,
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          SignButton(text: "Sign Up", onPressed: _signUp),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("Already have an account?"),
-              LinkButton(
-                text: "Sign In",
-                onPressed: () {
-                  Navigator.of(context).pushNamed(SignInPage.route);
-                },
-              )
-            ],
-          ),
-        ],
-      ),
+      body: isLoading == false
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const SizedBox(height: 10),
+                const SignHeader(),
+                SignInput(
+                    hintText: "Email",
+                    topPadding: 15,
+                    controller: _emailController),
+                SignInput(
+                    hintText: "Username",
+                    topPadding: 15,
+                    controller: _usernameController),
+                PasswordBox(
+                  hintText: "Password",
+                  controller: _passwordController,
+                  topPadding: 15,
+                ),
+                PasswordBox(
+                  hintText: "Confirm password",
+                  topPadding: 15,
+                  controller: _confirmPasswordController,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                SignButton(text: "Sign Up", onPressed: _signUp),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Already have an account?"),
+                    LinkButton(
+                      text: "Sign In",
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(SignInPage.route);
+                      },
+                    )
+                  ],
+                ),
+              ],
+            )
+          : const Center(child: CircularProgressIndicator()),
     );
   }
 
   Future<void> _signUp() async {
     if (_passwordController.text == _confirmPasswordController.text &&
-        _passwordController.text.length > 8 &&
+        _passwordController.text.length > 6 &&
         _usernameController.text.isNotEmpty &&
         _emailController.text.isNotEmpty &&
         _emailController.text.isValidEmail()) {
       try {
-        final user = await ServerService.signUp(
-            user: UserModel(
+        final response = await API.signUp(
+            user: AuthModel(
                 email: _emailController.text,
                 userName: _usernameController.text,
-                password: _passwordController.text,
-                userId: ""));
+                password: _passwordController.text));
 
-        StorageManager.saveId(user["user"]["id"] ?? "");
-        StorageManager.saveJWT(user["accessToken"] ?? "");
-
-        showSuccess(
-            context: context,
-            title: "Success",
-            message: "You have successfully signed up!");
-
-        await Future.delayed(const Duration(milliseconds: 200));
+        await Future.delayed(const Duration(milliseconds: 5));
         if (!mounted) return;
 
         Navigator.of(context).pushNamed(MemesPage.route);

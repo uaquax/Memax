@@ -9,6 +9,10 @@ class MemeModel {
   String title;
   String description;
   XFile? file;
+  List likes;
+  List comments;
+  bool isLiked;
+  int likesCount;
 
   MemeModel({
     required this.type,
@@ -18,6 +22,10 @@ class MemeModel {
     this.id,
     this.author,
     this.file,
+    this.likes = const [],
+    this.comments = const [],
+    this.isLiked = false,
+    this.likesCount = 0,
   });
 }
 

@@ -59,9 +59,6 @@ class _PasswordBoxState extends State<PasswordBox> {
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide.none,
             ),
-            errorText: isPasswordValidate == false
-                ? "Password must be at least 8 characters"
-                : null,
             hintText: widget.hintText,
           )),
     );

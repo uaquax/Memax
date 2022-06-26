@@ -1,6 +1,5 @@
 import 'package:client/models/user_model.dart';
 import 'package:client/services/config.dart';
-import 'package:client/widgets/profile/profile_header.dart';
 import 'package:flutter/material.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -19,7 +18,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     return Scaffold(
       body: Column(children: <Widget>[
-        const ProfileHeader(),
         Row(
           children: <Widget>[
             Expanded(

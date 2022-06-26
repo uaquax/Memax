@@ -1,7 +1,7 @@
+import 'package:client/models/auth_model.dart';
 import 'package:client/pages/memes_page.dart';
 import 'package:client/pages/sign_up_page.dart';
-import 'package:client/services/server_service.dart';
-import 'package:client/services/storage_manager.dart';
+import 'package:client/services/api.dart';
 import 'package:client/widgets/components/input_box.dart';
 import 'package:client/widgets/components/link_button.dart';
 import 'package:client/widgets/components/password_box.dart';
@@ -65,15 +65,13 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Future<void> _signIn() async {
-    final user = await ServerService.signIn(
+    final response = await API.signIn(
+        user: AuthModel(
       email: _emailController.text,
       password: _passwordController.text,
-    );
+    ));
 
-    StorageManager.saveId(user.id ?? "");
-    StorageManager.saveJWT(user.jwt ?? "");
-
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Future.delayed(const Duration(milliseconds: 0));
     if (!mounted) return;
 
     Navigator.of(context).pushNamed(MemesPage.route);

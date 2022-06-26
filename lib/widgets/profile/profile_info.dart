@@ -1,13 +1,15 @@
 import 'package:client/services/config.dart';
-import 'package:client/services/server_service.dart';
+import 'package:client/services/api.dart';
 import 'package:client/services/storage_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ProfileInfo extends StatefulWidget {
   final String id;
+  final bool isOwner;
 
-  const ProfileInfo({Key? key, required this.id}) : super(key: key);
+  const ProfileInfo({Key? key, required this.id, this.isOwner = false})
+      : super(key: key);
 
   @override
   State<ProfileInfo> createState() => _ProfileInfoState();
@@ -16,11 +18,10 @@ class ProfileInfo extends StatefulWidget {
 class _ProfileInfoState extends State<ProfileInfo> {
   String? userName;
   String? biography;
-  String avatar = defaultAvatarUrl;
+  String avatar = "$apiUrl/default.jpg";
   String? userId;
 
   bool isLoading = true;
-  bool isOwner = false;
   bool isFollowed = false;
 
   @override
@@ -30,28 +31,31 @@ class _ProfileInfoState extends State<ProfileInfo> {
   }
 
   void _getInfo() async {
-    final user = await ServerService.getUser(id: widget.id);
+    final response = await API.getUser(id: widget.id);
 
-    print(userName?.isEmpty);
-
-    userName = user["username"];
-    biography = user["biography"];
-    avatar = user["avatar"];
-
-    print(userName?.isEmpty);
+    userId = response?["user_id"];
+    userName = response?["username"];
+    biography = response?["biography"];
+    avatar = response?["avatar"];
 
     if (userName?.isEmpty == false) {
-      setState(() {
-        isLoading = false;
-      });
+      setStateIfMounted(() => isLoading = false);
     }
+  }
+
+  void setStateIfMounted(func) {
+    if (mounted) setState(func);
   }
 
   @override
   Widget build(BuildContext context) {
     return isLoading == true
         ? const Center(
-            child: SpinKitCircle(size: 120, color: grey),
+            child: SizedBox(
+              width: 100,
+              height: 100,
+              child: CircularProgressIndicator(),
+            ),
           )
         : Row(
             children: <Widget>[
@@ -90,12 +94,17 @@ class _ProfileInfoState extends State<ProfileInfo> {
                   ),
                   ElevatedButton(
                       onPressed: () {},
-                      child: Text(isOwner ? "Редактировать" : "Подписаться")),
+                      child: Text(
+                          widget.isOwner ? "Редактировать" : "Подписаться")),
                 ],
               ),
               const SizedBox(
                 width: 20,
-              )
+              ),
+              const Divider(
+                color: Colors.white,
+                thickness: 1,
+              ),
             ],
           );
   }

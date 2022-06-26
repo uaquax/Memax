@@ -4,7 +4,7 @@ import 'package:client/models/author_model.dart';
 import 'package:client/models/meme_model.dart';
 import 'package:client/pages/memes_page.dart';
 import 'package:client/services/colors.dart';
-import 'package:client/services/server_service.dart';
+import 'package:client/services/api.dart';
 import 'package:client/services/storage_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -31,13 +31,15 @@ class _CreateMemePageState extends State<CreateMemePage> {
   }
 
   void _getImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-    setState(() {
-      _image = image;
-      _file = File(image!.path);
-    });
+      setState(() {
+        _image = image;
+        _file = File(image!.path);
+      });
+    } catch (e) {}
   }
 
   @override
@@ -84,9 +86,11 @@ class _CreateMemePageState extends State<CreateMemePage> {
               description: _descriptionController.text,
               file: _image,
             );
-            ServerService.createMeme(meme);
 
-            Navigator.of(context).pushNamed(MemesPage.route);
+            API.createMeme(meme: meme);
+
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
           },
           backgroundColor: kButtonColor,
           child: const Icon(

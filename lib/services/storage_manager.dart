@@ -16,11 +16,25 @@ class StorageManager {
     }
   }
 
+  static void saveRefreshToken(String refreshToken) async {
+    if (refreshToken.isEmpty == false) {
+      await _storage.write(key: kRefreshToken, value: refreshToken);
+    }
+  }
+
+  static Future<String> getRefreshToken() async {
+    return await _storage.read(key: kRefreshToken) ?? "";
+  }
+
   static Future<String> getJWT() async {
     return await _storage.read(key: kJWT) ?? "";
   }
 
   static Future<String> getId() async {
     return await _storage.read(key: kId) ?? "";
+  }
+
+  static void clear() async {
+    await _storage.deleteAll();
   }
 }

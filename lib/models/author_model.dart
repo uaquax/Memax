@@ -12,7 +12,7 @@ class AuthorModel {
     required this.id,
     required this.userName,
     this.userId = "",
-    this.avatar = defaultAvatarUrl,
+    this.avatar = "$serverUrl/default.jpg",
     this.isFollowed = false,
   });
 }

@@ -3,7 +3,7 @@ import 'package:client/models/comment_model.dart';
 import 'package:client/models/meme_model.dart';
 import 'package:client/pages/profile_page.dart';
 import 'package:client/services/config.dart';
-import 'package:client/services/server_service.dart';
+import 'package:client/services/api.dart';
 import 'package:client/services/storage_manager.dart';
 import 'package:client/widgets/components/comment.dart';
 import 'package:flutter/material.dart';
@@ -188,15 +188,15 @@ class _MemeCardState extends State<MemeCard> {
                           color: buttonColor,
                         ),
                         onPressed: () async {
-                          final user = await ServerService.getUser(
+                          final user = await API.getUser(
                               id: await StorageManager.getId());
                           setState(() {
                             comments.add(CommentModel(
                                 author: AuthorModel(
-                                    id: user.id ?? "",
-                                    userName: user.userName,
-                                    avatar: user.avatar,
-                                    userId: user.userId),
+                                    id: user?["id"] ?? "",
+                                    userName: user?["userName"],
+                                    avatar: user?["avatar"],
+                                    userId: user?["userId"]),
                                 id: "",
                                 text: _controller.text,
                                 date: DateFormat('yyyy-MM-dd HH-ss')

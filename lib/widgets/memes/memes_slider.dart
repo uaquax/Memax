@@ -2,11 +2,11 @@ import 'package:client/models/author_model.dart';
 import 'package:client/models/comment_model.dart';
 import 'package:client/pages/profile_page.dart';
 import 'package:client/services/config.dart';
-import 'package:client/services/server_service.dart';
+import 'package:client/services/api.dart';
 import 'package:client/services/storage_manager.dart';
 import 'package:client/widgets/components/comment.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../models/meme_model.dart';
 
@@ -18,9 +18,10 @@ class MemesSlider extends StatefulWidget {
 }
 
 class _MemesSliderState extends State<MemesSlider> {
-  final List<MemeModel> _memes = <MemeModel>[];
+  static final List<MemeModel> _memes = <MemeModel>[];
 
-  final int _maxLoadedMemes = 2;
+  final int _limit = 2;
+  final PageController _pageController = PageController();
   int _lastIndex = 0;
 
   @override
@@ -34,97 +35,102 @@ class _MemesSliderState extends State<MemesSlider> {
   Widget build(BuildContext context) {
     return Expanded(
       child: PageView(
+        controller: _pageController,
         physics: const BouncingScrollPhysics(),
         onPageChanged: _pageChanged,
         scrollDirection: Axis.horizontal,
+        dragStartBehavior: DragStartBehavior.down,
         children: _memes.map((meme) {
-          return Container(
-            width: MediaQuery.of(context).size.width,
-            margin: const EdgeInsets.symmetric(horizontal: 5.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  offset: Offset(0.0, 10.0),
-                  blurRadius: 10.0,
+          return Column(
+            children: [
+              Card(
+                child: ListTile(
+                  onTap: () => {_showProfile(meme)},
+                  title: Text(meme.author!.userName),
+                  leading: CircleAvatar(
+                      backgroundImage: NetworkImage(meme.author!.avatar)),
+                  trailing: IconButton(
+                    padding: const EdgeInsets.all(5),
+                    iconSize: 20,
+                    icon:
+                        Icon(meme.author!.isFollowed ? Icons.check : Icons.add),
+                    color: buttonColor,
+                    onPressed: () {
+                      setState(() {
+                        meme.author!.isFollowed = !meme.author!.isFollowed;
+                      });
+                    },
+                  ),
                 ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Column(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.all(20),
-                    child: Card(
-                      child: ListTile(
-                        onTap: () => {_showProfile(meme)},
-                        title: Text(meme.author!.userName),
-                        leading: const CircleAvatar(
-                          backgroundImage:
-                              AssetImage("assets/images/avatar.jpg"),
-                        ),
-                        trailing: IconButton(
-                          padding: const EdgeInsets.all(5),
-                          iconSize: 20,
-                          icon: Icon(meme.author!.isFollowed
-                              ? Icons.check
-                              : Icons.add),
-                          color: buttonColor,
-                          onPressed: () {
-                            setState(() {
-                              meme.author!.isFollowed =
-                                  !meme.author!.isFollowed;
-                            });
-                          },
-                        ),
+              ),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      filterQuality: FilterQuality.high,
+                      image: NetworkImage(meme.picture ?? ""),
+                      fit: BoxFit.contain,
+                    ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        offset: Offset(0.0, 10.0),
+                        blurRadius: 10.0,
+                      ),
+                    ],
+                  ),
+                  child: Column(children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onDoubleTap: () {
+                          _likeMeme(meme);
+                        },
+                        onVerticalDragEnd: (details) {
+                          if (details.primaryVelocity! < 0) {
+                            _showComments(meme);
+                          }
+                          if (details.primaryVelocity! > 0) {
+                            _showProfile(meme);
+                          }
+                        },
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onDoubleTap: () {
-                        _likeMeme(meme);
-                      },
-                      onVerticalDragEnd: (details) {
-                        if (details.primaryVelocity! < 0) {
-                          _showComments(meme);
-                        }
-                        if (details.primaryVelocity! > 0) {
-                          _showProfile(meme);
-                        }
-                      },
-                      child: Image.network(meme.picture ?? "",
-                          fit: BoxFit.contain),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(meme.likesCount.toString()),
+                          IconButton(
+                            splashRadius: 5,
+                            iconSize: 40,
+                            onPressed: () {
+                              setState(() {
+                                _likeMeme(meme);
+                              });
+                            },
+                            icon: Icon(
+                              Icons.favorite,
+                              color: meme.isLiked == true
+                                  ? Colors.red
+                                  : buttonColor,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: IconButton(
-                      iconSize: 40,
-                      onPressed: () {
-                        setState(() {
-                          _likeMeme(meme);
-                        });
-                      },
-                      icon: Icon(Icons.favorite,
-                          color: meme.author?.isLiked == true
-                              ? Colors.red
-                              : buttonColor),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: IconButton(
+                          onPressed: () {
+                            _showComments(meme);
+                          },
+                          icon: const Icon(Icons.keyboard_arrow_down_rounded)),
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: IconButton(
-                        onPressed: () {
-                          _showComments(meme);
-                        },
-                        icon: const Icon(Icons.keyboard_arrow_down_rounded)),
-                  ),
-                ],
-              ),
-            ),
+                  ]),
+                ),
+              )
+            ],
           );
         }).toList(),
       ),
@@ -132,11 +138,7 @@ class _MemesSliderState extends State<MemesSlider> {
   }
 
   void _pageChanged(int index) async {
-    if (index >= _lastIndex && index % _maxLoadedMemes - 1 == 0) {
-      setState(() {
-        _lastIndex = index;
-      });
-
+    if (index == _memes.length - 1) {
       await Future.delayed(const Duration(seconds: 0))
           .then((value) => {_addMemes()});
     }
@@ -144,19 +146,27 @@ class _MemesSliderState extends State<MemesSlider> {
 
   void _likeMeme(MemeModel meme) {
     setState(() {
-      meme.author?.isLiked = !meme.author!.isLiked;
+      if (meme.isLiked == true) {
+        meme.likesCount--;
+      } else {
+        meme.likesCount++;
+      }
+      meme.isLiked = !meme.isLiked;
     });
+
+    API.changeLikeStatus(meme.id ?? "");
   }
 
   void _showProfile(MemeModel meme) {
-    Navigator.of(context).pushNamed(
-      ProfilePage.route,
-      arguments: ProfilePageArguments(id: meme.author?.id ?? ""),
-    );
+    showGeneralDialog(
+        context: context,
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return ProfilePage(id: meme.author!.id);
+        });
   }
 
   void _showComments(MemeModel meme) {
-    final comments = <CommentModel>[];
+    final comments = meme.comments;
     TextEditingController _controller = TextEditingController();
 
     showModalBottomSheet(
@@ -179,7 +189,10 @@ class _MemesSliderState extends State<MemesSlider> {
                     itemCount: comments.length,
                     itemBuilder: (BuildContext context, int index) {
                       return Comment(
-                        comment: comments[index],
+                        comment: CommentModel(
+                            author: comments[index].author,
+                            text: comments[index].text,
+                            date: comments[index].date),
                       );
                     },
                   ),
@@ -205,19 +218,7 @@ class _MemesSliderState extends State<MemesSlider> {
                           color: buttonColor,
                         ),
                         onPressed: () async {
-                          final user = await ServerService.getUser(
-                              id: await StorageManager.getId());
                           setState(() {
-                            comments.add(CommentModel(
-                                author: AuthorModel(
-                                    id: user.id ?? "",
-                                    userName: user.userName,
-                                    avatar: user.avatar,
-                                    userId: user.userId),
-                                id: "",
-                                text: _controller.text,
-                                date: DateFormat('yyyy-MM-dd HH-ss')
-                                    .format(DateTime.now())));
                             _controller.text = "";
                           });
                         },
@@ -234,20 +235,48 @@ class _MemesSliderState extends State<MemesSlider> {
   }
 
   void _addMemes() async {
-    final memes = await ServerService.getMemes();
-
-    for (final meme in memes) {
-      final author = await ServerService.getUser(id: meme["author"]);
-      _memes.add(
-        MemeModel(
-          type: MemeType.image,
-          author: AuthorModel(id: author["id"], userName: author["username"]),
-          picture: meme["picture"],
-          id: meme["id"] ?? "",
-          description: meme["description"],
-          title: meme["title"],
-        ),
-      );
+    final memes = await API.getMemes(limit: _limit, page: _memes.length);
+    if (memes != null && memes.length > 0) {
+      try {
+        for (final meme in memes["posts"]) {
+          final author = await API.getUser(id: meme["author"]);
+          _memes.add(
+            MemeModel(
+              type: MemeType.image,
+              author: AuthorModel(
+                  id: author?["id"],
+                  userName: author?["username"],
+                  avatar: author?["avatar"]),
+              picture: meme["picture"],
+              id: meme["id"] ?? "",
+              description: meme["description"],
+              title: meme["title"],
+              likes: meme["likes"],
+              comments: meme["comments"],
+            ),
+          );
+          _memes.last.isLiked =
+              _memes.last.likes.contains(await StorageManager.getId());
+          _memes.last.likesCount = _memes.last.likes.length;
+        }
+      } catch (e) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("Error"),
+                content: Text(e.toString()),
+                actions: <Widget>[
+                  ElevatedButton(
+                    child: const Text("Ok"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      }
     }
 
     setState(() {});
