@@ -1,14 +1,15 @@
-import 'package:client/pages/create_meme_page.dart';
-import 'package:client/pages/memes_page.dart';
-import 'package:client/pages/settings_page.dart';
-import 'package:client/pages/sign_in_page.dart';
-import 'package:client/services/config.dart';
+import 'package:client/pages/settings/settings_page.dart';
+import 'package:client/pages/sign/sign_in_page.dart';
+import 'package:client/pages/sign/sign_up_page.dart';
+import 'package:client/services/colors.dart';
 import 'package:flutter/material.dart';
-import 'pages/profile_page.dart';
-import 'pages/sign_up_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'pages/memes/create_meme_page.dart';
+import 'pages/memes/memes_page.dart';
+import 'pages/profile/profile_page.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+void main() async {
+  await dotenv.load();
 
   runApp(const App());
 }
@@ -21,7 +22,6 @@ class App extends StatelessWidget {
     return MaterialApp(
       themeMode: ThemeMode.dark,
       darkTheme: Themes.dark,
-      home: const SignUpPage(),
       routes: {
         SignUpPage.route: (context) => const SignUpPage(),
         SignInPage.route: (context) => const SignInPage(),

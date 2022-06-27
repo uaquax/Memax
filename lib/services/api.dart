@@ -1,16 +1,17 @@
 import 'dart:convert';
-
 import 'package:client/models/auth_model.dart';
-import 'package:client/models/meme_model.dart';
-import 'package:client/services/config.dart';
+import 'package:client/models/author.dart';
+import 'package:client/models/comment.dart';
+import 'package:client/models/meme.dart';
 import 'package:client/services/storage_manager.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class API {
-  int count = 0;
   static final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: apiUrl,
+      baseUrl: dotenv.env['API_URL'] ?? 'http://localhost:3000',
     ),
   )..interceptors.add(
       InterceptorsWrapper(
@@ -22,7 +23,6 @@ class API {
           return handler.next(request);
         },
         onError: (error, handler) async {
-          print("<- ERROR -> 401");
           if (error.response?.statusCode == 401) {
             final token = await StorageManager.getJWT();
             if (token.isNotEmpty) {
@@ -45,6 +45,21 @@ class API {
     return null;
   }
 
+  static Future<Comment?> getComment({required String id}) async {
+    final Response response = await _dio.get("/comment/$id");
+
+    if (response.statusCode == 200 && response.data.isNotEmpty) {
+      final author = await getUser(id: response.data["author"]);
+      return Comment(
+        id: response.data['id'],
+        body: response.data['body'],
+        fatherId: response.data["fatherId"] ?? "",
+        author: Author(id: author?["id"], userName: author?["username"]),
+      );
+    }
+    return null;
+  }
+
   static Future<Map?> signUp({required AuthModel user}) async {
     try {
       FormData data = FormData.fromMap(
@@ -54,15 +69,7 @@ class API {
           'password': user.password,
         },
       );
-      final response = await _dio.post(
-        "/sign-up",
-        data: data,
-        options: Options(
-          headers: <String, String>{
-            'Content-Type': 'multipart/from-data; charset=UTF-8',
-          },
-        ),
-      );
+      final response = await _dio.post("/sign-up", data: data);
 
       if (response.statusCode == 200) {
         StorageManager.saveRefreshToken(response.data["refreshToken"]);
@@ -85,10 +92,6 @@ class API {
           "password": user.password,
         }));
 
-    if (response.statusCode == 401 || response.statusCode == 403) {
-      print("\n\n  <- Error -> 401~~ \n\n");
-    }
-
     if (response.statusCode == 200 && response.data.isNotEmpty) {
       StorageManager.saveRefreshToken(response.data["refreshToken"]);
       StorageManager.saveJWT(response.data["accessToken"]);
@@ -99,7 +102,20 @@ class API {
     return null;
   }
 
-  static void createMeme({required MemeModel meme}) async {
+  static void createComment(
+      {required String body, required String fatherId}) async {
+    await _dio.post(
+      "/create-comment",
+      data: jsonEncode(
+        {
+          "body": body,
+          "fatherId": fatherId,
+        },
+      ),
+    );
+  }
+
+  static createMeme({required Meme meme}) async {
     FormData formData = FormData.fromMap({
       "title": meme.title,
       "description": meme.description,
@@ -108,31 +124,53 @@ class API {
       MapEntry(
         "picture",
         await MultipartFile.fromFile(meme.file!.path,
-            filename: meme.file!.path.split("/").last),
+            filename: meme.file?.path.split("/").last),
       ),
     );
-    final Response response = await _dio.post("/create-post",
-        data: formData,
-        options: Options(headers: {
-          'Authorization': 'Bearer ${await StorageManager.getJWT()}',
-        }));
+    final Response response = await _dio.post("/create-post", data: formData);
 
-    if (response.statusCode == 401 || response.statusCode == 403) {
-      print("\n\n  <- Error -> 401~~ \n\n");
+    if (response.statusCode == 200) {
+      return response.data;
     }
   }
 
-  static Future<Map?> getMemes({required int limit, required int page}) async {
+  static Future<List<Meme>?> getMemes(
+      {required int page, required int limit}) async {
     final Response response = await _dio.get("/posts?page=$page&limit=$limit");
 
-    if (response.statusCode == 401 || response.statusCode == 403) {
-      print("\n\n  <- Error -> 401~~ \n\n");
-    }
-
     if (response.statusCode == 200 && response.data.isNotEmpty) {
-      return response.data;
+      final responseMemes = response.data["posts"];
+
+      if (responseMemes.isNotEmpty) {
+        final List<Meme> memes = [];
+        for (var meme in responseMemes) {
+          if (kDebugMode) {
+            print("$meme \n\n");
+          }
+          final author = await API.getUser(id: meme["author"]);
+
+          memes.add(
+            Meme(
+              author: Author(
+                  id: author?["id"],
+                  userName: author?["username"],
+                  avatar: author?["avatar"]),
+              picture: meme?["picture"],
+              id: meme?["id"] ?? "",
+              description: meme?["description"],
+              title: meme?["title"],
+              likes: meme?["likes"],
+              comments: meme?["comments"],
+            ),
+          );
+
+          memes.last.isLiked =
+              memes.last.likes.contains(await StorageManager.getId());
+          memes.last.likesCount = memes.last.likes.length;
+        }
+        return memes;
+      }
     }
-    return null;
   }
 
   static Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {
@@ -151,14 +189,18 @@ class API {
   static refreshToken() async {
     final token = await StorageManager.getRefreshToken();
 
+    final Dio dio = Dio(
+      BaseOptions(
+        baseUrl: dotenv.env['API_URL'] ?? 'http://localhost:3000',
+      ),
+    );
+
     if (token.isNotEmpty) {
-      final Response response = await _dio.post(
+      final Response response = await dio.post(
         "/refresh/mobile",
-        options: Options(
-          headers: {
-            "refreshToken": token,
-          },
-        ),
+        data: jsonEncode({
+          "refreshToken": token,
+        }),
       );
 
       if (response.statusCode == 200 ||
@@ -166,7 +208,11 @@ class API {
         StorageManager.saveJWT(response.data["accessToken"]);
         StorageManager.saveRefreshToken(response.data["refreshToken"]);
 
-        return response.data;
+        await Future.delayed(const Duration(seconds: 0)).then(
+          (value) {
+            return response.data;
+          },
+        );
       } else {
         StorageManager.clear();
       }

@@ -8,6 +8,7 @@
 .buildlog/
 .history
 .svn/
+.env
 migrate_working_dir/
 
 # IntelliJ related
@@ -48,3 +49,7 @@ app.*.map.json
 
 /android/upload-keystore.jks
 .lib/services/config.darts
+
+# "JSON to Dart Model" generator tracker files locations.
+/.json_models/
+models.jsonc
